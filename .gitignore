@@ -1,3 +1,18 @@
+# Gmail credential locations
+.credentials
+credentials.json
+# User information files
+info.json
+info.remote.json
+# Undesirable files
+pythonEnvironment
+__pycache__
+output.log
+.DS_Store
+
+
+###### Default git ignore from github ###
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
