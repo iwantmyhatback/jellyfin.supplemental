@@ -1,0 +1,26 @@
+{
+  "EMAIL" : {
+    "TO_LIST" : ["toEmail@provider.ext"],
+    "SENDER_STRING" : "senderEmail@provider.ext",
+    "BCC_LIST" :  ["toEmail1@provider.ext","toEmail2@provider.ext"],
+    "SUBJECT_STRING" : "Some Subject Here"
+  },
+  "GMAIL" : {
+    "CLIENT_SECRET_FILE" : "path/to/file/from/gmail/credentials.json",
+    "CREDENTIAL_LOCATION" : ".credentials",
+    "SCOPES": "https://www.googleapis.com/auth/gmail.send",
+    "APPLICATION_NAME" : "Your Application Name"
+  },
+  "JELLYFIN":{
+    "SERVER_URL" : "someServerUrlOrIpAddress",
+    "PORT" : "portNumber",
+    "API_KEY" : "apiKey",
+    "USERNAME": "someUserNameValue",
+    "PASSWORD": "somePasswordValue",
+    "CREDENTIAL_LOCATION" : ".credentials",
+    "CLIENT_SECRET_FILE" : "jellyfin-credentials.json"
+  },
+  "TMDB":{
+    "API_KEY" : "valueForValidTmdbApiKey"
+  }
+}
