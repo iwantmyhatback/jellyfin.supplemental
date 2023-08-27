@@ -2,12 +2,12 @@
 
 # Perform the entire Check and Email routine and all the Deployment tasks
 # Includes:
+#   Ensuring script execution is within the repository
 #   Getting repository changes
 #   Rebuilding Docker image if there were any git changes
 #   Run the main.sh script in a disposable docker container
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
 cd "${SCRIPT_DIR}" || exit
 
 PREVIOUS_COMMIT=$(git rev-list HEAD -n 1)

@@ -11,7 +11,7 @@ output.log
 .DS_Store
 
 
-###### Default git ignore from github ###
+###### Default git ignore from github for python ###
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
