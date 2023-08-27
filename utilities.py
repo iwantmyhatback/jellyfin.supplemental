@@ -49,9 +49,9 @@ def replaceEveryNth(analysisString, substitutionTarget, targetReplacement, nth):
 def generateHeader(mediaType, numberOfMovies):
     digits = len(str(numberOfMovies))
     mediaTypeLength = len(str(mediaType))
-    segmentOne = "+--------------------+"
-    segmentTwo = f"|{numberOfMovies} {mediaType} Updated This Week|"
-    segmentThree = "+--------------------+"
+    segmentOne = "+------------+"
+    segmentTwo = f"| {numberOfMovies} {mediaType} Updated |"
+    segmentThree = "+------------+"
     for i in range(1, (digits + mediaTypeLength), 1):
         segmentOne = segmentOne.replace("-", "--", 1)
         segmentThree = segmentThree.replace("-", "--", 1)
