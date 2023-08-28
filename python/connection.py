@@ -9,9 +9,9 @@ REMOTE_CONNECTION = str(osEnviron.get("REMOTE_CONNECTION")).upper()
 if REMOTE_CONNECTION in ["YES", "TRUE"]:
     print(
         f"[ENV] REMOTE_CONNECTION={REMOTE_CONNECTION} passed in environment ..........")
-    infoFile = open("../configuration/info.remote.json")
+    infoFile = open("configuration/info.remote.json")
 else:
-    infoFile = open("../configuration/info.json")
+    infoFile = open("configuration/info.json")
 
 info = loadJson(infoFile)
 

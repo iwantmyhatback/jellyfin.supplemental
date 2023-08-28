@@ -4,7 +4,7 @@ from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, generate
 from json import load as loadJson
 from requests import get as httpGET
 
-info = loadJson(open("../configuration/info.json"))
+info = loadJson(open("configuration/info.json"))
 
 
 def main():

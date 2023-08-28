@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Perform the entire Check and Email routine and all the Deployment tasks
 # Includes:
@@ -7,11 +7,12 @@
 #   Rebuilding Docker image if there were any git changes
 #   Run the shell/main.sh script in a disposable docker container
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd "${SCRIPT_DIR}" || exit
+REPO_ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "${REPO_ROOT_DIR}" || exit
 
-. sourceEnvironment.sh
+. "${REPO_ROOT_DIR}/shell/sourceEnvironment.sh"
 
+echo "[GIT] Start git repository update (Pull)"
 PREVIOUS_COMMIT=$(git rev-list HEAD -n 1)
 git pull
 
@@ -21,9 +22,9 @@ if [ "${PREVIOUS_COMMIT}" != "$(git rev-list HEAD -n 1)" ] || [ "${FORCE_DOCKER_
     else
         echo "[INFO] Found changes to jellyfin-supplemental... Rebuilding image"
     fi
-    "${SCRIPT_DIR}/buildImage.sh"
+    "${REPO_ROOT_DIR}/shell/buildImage.sh"
 else
     echo "[INFO] No changes to jellyfin-supplemental"
 fi
 
-docker run --env-file "../configuration/environment.properties" --rm --name jellyfin-supplemental jellyfin-supplemental:latest shell/main.sh
+docker run --env-file "${REPO_ROOT_DIR}/configuration/environment.properties" --rm --name jellyfin-supplemental jellyfin-supplemental:latest ${REPO_ROOT_DIR}/shell/main.sh

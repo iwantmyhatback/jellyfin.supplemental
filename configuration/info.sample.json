@@ -7,7 +7,7 @@
   },
   "GMAIL" : {
     "CLIENT_SECRET_FILE" : "path/to/file/from/gmail/credentials.json",
-    "CREDENTIAL_LOCATION" : "../.credentials",
+    "CREDENTIAL_LOCATION" : ".credentials",
     "SCOPES": "https://www.googleapis.com/auth/gmail.send",
     "APPLICATION_NAME" : "Your Application Name"
   },
@@ -17,7 +17,7 @@
     "API_KEY" : "apiKey",
     "USERNAME": "someUserNameValue",
     "PASSWORD": "somePasswordValue",
-    "CREDENTIAL_LOCATION" : "../.credentials",
+    "CREDENTIAL_LOCATION" : ".credentials",
     "CLIENT_SECRET_FILE" : "jellyfin-credentials.json"
   },
   "TMDB":{

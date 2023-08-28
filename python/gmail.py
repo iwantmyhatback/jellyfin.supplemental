@@ -12,7 +12,7 @@ from email.mime.base import MIMEBase
 
 TEST_MODE = str(osEnviron.get("TEST_MODE")).upper()
 
-infoFile = open("../configuration/info.json")
+infoFile = open("configuration/info.json")
 info = loadJson(infoFile)
 
 GMAIL = info.get("GMAIL")

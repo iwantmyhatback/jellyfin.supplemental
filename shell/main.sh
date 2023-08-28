@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#! /usr/bin/env sh
 
 # Perform the entire Check and Email routine
 # Includes:
@@ -7,18 +7,15 @@
 #   Perform Pre-Python dependency checks and installed
 #   Then execute the Python routine
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd "${SCRIPT_DIR}" || exit
+REPO_ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "${REPO_ROOT_DIR}" || exit
 
 
 if [ -z "${ALREADY_SOURCED:-}" ]; then
-  . sourceEnvironment.sh
+  . "${REPO_ROOT_DIR}/shell/sourceEnvironment.sh"
 else
   echo "[ENV] Skipping additional sourcing because ALREADY_SOURCED is defined"
 fi
-
-cd ../ || exit
-
 
 if [ -d "${PYENV_LOCATION}" ]; then
   echo "[INFO] ${PYENV_LOCATION} does exist."
@@ -32,6 +29,4 @@ fi
 pip install --quiet --requirement requirements.txt
 # pip freeze > requirements.txt
 
-cd python/ || exit
-
-python3 main.py
+python3 python/main.py
