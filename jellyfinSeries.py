@@ -66,7 +66,7 @@ def main():
                     series.get("PremiereDate"), "%Y-%m-%dT%H:%M:%S.%f")
                 seriesYear = seriesPremierDate.year
             else:
-                seriesPremierDate = 'Unknown'
+                seriesYear = 0000
 
             # Parse Content Rating
             if series.get("OfficialRating"):
