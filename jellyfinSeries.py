@@ -1,10 +1,10 @@
 from connection import jellyfinConnection
 from operator import itemgetter
-from utilities import *
-import json
-import requests
+from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, generateHeader
+from json import load as loadJson
+from requests import get as httpGET
 
-info = json.load(open("info.json"))
+info = loadJson(open("info.json"))
 
 
 def main():
@@ -48,7 +48,7 @@ def main():
             # Parse Movie Poster URL
             seriesId = series.get("ProviderIds").get('Tmdb')
             tmdbApiKey = info.get('TMDB').get('API_KEY')
-            response = requests.get(url=baseApiUrl.format(
+            response = httpGET(url=baseApiUrl.format(
                 seriesId=seriesId, apiKey=tmdbApiKey))
             responseDict = response.json()
 

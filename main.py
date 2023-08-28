@@ -1,4 +1,4 @@
-import gmail
+from gmail import main as sendGmailMessage
 from jellyfinMovies import main as jellyfinMovies
 from jellyfinSeries import main as jellyfinSeries
 
@@ -8,4 +8,4 @@ from jellyfinSeries import main as jellyfinSeries
 plainMessage = f"{moviePlainMessage}<br><br>{seriesPlainMessage}"
 htmlMessage = f"{movieHtmlMessage}<br><br>{seriesHtmlMessage}"
 
-gmail.main(plainMessage, htmlMessage)
+sendGmailMessage(plainMessage, htmlMessage)

@@ -1,10 +1,10 @@
 from connection import jellyfinConnection
 from operator import itemgetter
-from utilities import *
-import json
-import requests
+from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, generateHeader
+from json import load as loadJson
+from requests import get as httpGET
 
-info = json.load(open("info.json"))
+info = loadJson(open("info.json"))
 
 
 def main():
@@ -12,8 +12,6 @@ def main():
 
     recentlyAddedMovies = client.jellyfin.get_recently_added(
         limit=1000, media='movie')
-
-    # print(json.dumps(recentlyAddedMovies, indent=2))
 
     newMovieList = []
     baseApiUrl = "https://api.themoviedb.org/3/movie/{movieId}/images?language=en&api_key={apiKey}"
@@ -39,7 +37,7 @@ def main():
             # Parse Movie Poster URL
             movieId = movie.get("ProviderIds").get('Tmdb')
             tmdbApiKey = info.get('TMDB').get('API_KEY')
-            response = requests.get(url=baseApiUrl.format(
+            response = httpGET(url=baseApiUrl.format(
                 movieId=movieId, apiKey=tmdbApiKey))
             responseDict = response.json()
 
