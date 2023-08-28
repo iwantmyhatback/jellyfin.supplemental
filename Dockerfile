@@ -1,14 +1,15 @@
 FROM python:latest
 
-ENV DIRNAME="jellyfin-supplemental"
+ARG DIRNAME
+ARG PYENV_LOCATION
+
 COPY . $DIRNAME
 WORKDIR $DIRNAME
 EXPOSE 443
 EXPOSE 80
 
-ENV VIRTUAL_ENV="./pythonEnvironment"
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV PATH="$PYENV_LOCATION/bin:$PATH"
 
-RUN python3 -m venv $VIRTUAL_ENV
+RUN python3 -m venv $PYENV_LOCATION
 RUN pip install -r requirements.txt
 RUN chmod +x main.sh
