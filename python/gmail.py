@@ -45,7 +45,8 @@ def get_credentials():
     store = oa2File.Storage(credential_path)
     credentials = store.get()
     if not credentials or credentials.invalid:
-        flow = oa2Client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        flow = oa2Client.flow_from_clientsecrets(
+            f"{credential_dir}/{CLIENT_SECRET_FILE}", SCOPES)
         flow.user_agent = APPLICATION_NAME
         credentials = oa2Tools.run_flow(flow, store)
         print("Storing credentials to " + credential_path)
