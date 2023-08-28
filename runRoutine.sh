@@ -16,10 +16,14 @@ PREVIOUS_COMMIT=$(git rev-list HEAD -n 1)
 git pull
 
 if [ "${PREVIOUS_COMMIT}" != "$(git rev-list HEAD -n 1)" ] || [ "${FORCE_DOCKER_REBUILD:-}" = 'TRUE' ]; then
-    echo "Found changes to jellyfin-supplemental... Rebuilding image"
+    if [ "${FORCE_DOCKER_REBUILD:-}" = 'TRUE' ]; then
+        echo "[INFO] FORCE_DOCKER_REBUILD is active... Rebuilding image"
+    else
+        echo "[INFO] Found changes to jellyfin-supplemental... Rebuilding image"
+    fi
     "${SCRIPT_DIR}/buildImage.sh"
 else
-    echo "No changes to jellyfin-supplemental"
+    echo "[INFO] No changes to jellyfin-supplemental"
 fi
 
 docker run --env-file "environment.properties" --rm --name jellyfin-supplemental jellyfin-supplemental:latest ./main.sh
