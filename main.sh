@@ -1,14 +1,22 @@
-#! /usr/bin/env sh
+#! /usr/bin/env bash
 
-# Export the environment variables set in environment.properties
-# Perform Pre-Python dependency checks and installed
-# Then execute the Python routine
+# Perform the entire Check and Email routine
+# Includes:
+#   Ensuring script execution is within the repository
+#   Export the environment variables set in environment.properties
+#   Perform Pre-Python dependency checks and installed
+#   Then execute the Python routine
 
-echo "[ENV] Introducting environment.properties variables:"
-while read -r variable; do
-  echo "[ENV] ${variable?}"
-  export "${variable?}"
-done < environment.properties
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd "${SCRIPT_DIR}" || exit
+
+
+if [ -z "${ALREADY_SOURCED:-}" ]; then
+  . sourceEnvironment.sh
+else
+  echo "[ENV] Skipping additional sourcing because ALREADY_SOURCED is defined"
+fi
+
 
 if [ -d "${PYENV_LOCATION}" ]; then
   echo "[INFO] ${PYENV_LOCATION} does exist."
