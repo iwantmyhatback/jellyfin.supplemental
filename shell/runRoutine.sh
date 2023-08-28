@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Perform the entire Check and Email routine and all the Deployment tasks
 # Includes:
@@ -7,7 +7,7 @@
 #   Rebuilding Docker image if there were any git changes
 #   Run the shell/main.sh script in a disposable docker container
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd )
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "${SCRIPT_DIR}" || exit
 
 . sourceEnvironment.sh
