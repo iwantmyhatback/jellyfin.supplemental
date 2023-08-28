@@ -5,6 +5,7 @@ credentials.json
 info.json
 info.remote.json
 # Undesirable files
+lastOutputLog.txt
 pythonEnvironment
 __pycache__
 output.log
