@@ -12,4 +12,4 @@ ENV PATH="$PYENV_LOCATION/bin:$PATH"
 
 RUN python3 -m venv $PYENV_LOCATION
 RUN pip install -r requirements.txt
-RUN chmod +x main.sh
+RUN chmod +x shell/main.sh

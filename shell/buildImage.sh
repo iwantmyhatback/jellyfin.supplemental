@@ -1,7 +1,7 @@
 #! /usr/bin/env sh
 
 # Delete existing Docker image and rebuild the image with current files
-# Can be used when testing adhoc, but is also used by runRoutine.sh in deployments
+# Can be used when testing adhoc, but is also used by shell/runRoutine.sh in deployments
 
 if [ -z "${ALREADY_SOURCED:-}" ]; then
   . sourceEnvironment.sh
@@ -11,4 +11,4 @@ fi
 
 docker pull python
 docker image rm jellyfin-supplemental
-docker build --build-arg PYENV_LOCATION --build-arg DIRNAME="$(pwd)" -t jellyfin-supplemental .
+docker build --build-arg PYENV_LOCATION --build-arg DIRNAME="$(pwd)" -t jellyfin-supplemental ../

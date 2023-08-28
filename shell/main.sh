@@ -3,7 +3,7 @@
 # Perform the entire Check and Email routine
 # Includes:
 #   Ensuring script execution is within the repository
-#   Export the environment variables set in environment.properties
+#   Export the environment variables set in configuration/environment.properties
 #   Perform Pre-Python dependency checks and installed
 #   Then execute the Python routine
 
@@ -17,6 +17,8 @@ else
   echo "[ENV] Skipping additional sourcing because ALREADY_SOURCED is defined"
 fi
 
+cd ../ || exit
+
 
 if [ -d "${PYENV_LOCATION}" ]; then
   echo "[INFO] ${PYENV_LOCATION} does exist."
@@ -29,5 +31,7 @@ fi
 
 pip install --quiet --requirement requirements.txt
 # pip freeze > requirements.txt
+
+cd python/ || exit
 
 python3 main.py

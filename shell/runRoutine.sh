@@ -5,7 +5,7 @@
 #   Ensuring script execution is within the repository
 #   Getting repository changes
 #   Rebuilding Docker image if there were any git changes
-#   Run the main.sh script in a disposable docker container
+#   Run the shell/main.sh script in a disposable docker container
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd )
 cd "${SCRIPT_DIR}" || exit
@@ -26,4 +26,4 @@ else
     echo "[INFO] No changes to jellyfin-supplemental"
 fi
 
-docker run --env-file "environment.properties" --rm --name jellyfin-supplemental jellyfin-supplemental:latest ./main.sh
+docker run --env-file "../configuration/environment.properties" --rm --name jellyfin-supplemental jellyfin-supplemental:latest shell/main.sh

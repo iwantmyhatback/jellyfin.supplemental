@@ -1,8 +1,8 @@
 #! /usr/bin/env sh
 
-# Export the environment variables set in environment.properties
+# Export the environment variables set in configuration/environment.properties
 
-echo "[ENV] Introducting environment.properties variables:"
+echo "[ENV] Introducting configuration/environment.properties variables:"
 while read -r variable; do
   if [ "${variable%"${variable#?}"}" = "#" ] || [ "${variable}" = '' ]; then
     continue
@@ -10,4 +10,4 @@ while read -r variable; do
     echo "[ENV] ${variable?}"
     export "${variable?}"
   fi
-done < environment.properties
+done < ../configuration/environment.properties

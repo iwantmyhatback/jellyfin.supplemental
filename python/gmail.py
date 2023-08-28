@@ -12,7 +12,7 @@ from email.mime.base import MIMEBase
 
 TEST_MODE = str(osEnviron.get("TEST_MODE")).upper()
 
-infoFile = open("info.json")
+infoFile = open("../configuration/info.json")
 info = loadJson(infoFile)
 
 GMAIL = info.get("GMAIL")
@@ -50,7 +50,8 @@ def get_credentials():
         credentials = oa2Tools.run_flow(flow, store)
         print("Storing credentials to " + credential_path)
     else:
-        credString = open(".credentials/gmail-python-email-send.json").read()
+        credString = open(
+            f"{CREDENTIAL_LOCATION}/gmail-python-email-send.json").read()
         credentials = oa2Client.OAuth2Credentials.from_json(credString)
         http = credentials.authorize(Http())
         credentials.refresh(http)

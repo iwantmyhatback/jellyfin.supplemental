@@ -4,7 +4,7 @@ from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, generate
 from json import load as loadJson
 from requests import get as httpGET
 
-info = loadJson(open("info.json"))
+info = loadJson(open("../configuration/info.json"))
 
 
 def main():
@@ -14,7 +14,15 @@ def main():
         recentlyAddedSeries = client.jellyfin.user_items(
             handler="/Latest",
             params={
-                'fields': ['DateCreated', 'DateLastMediaAdded', 'Tags', 'Genres', 'ProviderIds', 'RemoteTrailers', 'Overview'],
+                'fields': [
+                    'DateCreated',
+                    'DateLastMediaAdded',
+                    'Tags',
+                    'Genres',
+                    'ProviderIds',
+                    'RemoteTrailers',
+                    'Overview'
+                ],
                 'includeItemTypes': ['Series'],
                 'limit': 1000
             }
@@ -33,10 +41,10 @@ def main():
             series.get("DateLastMediaAdded"), "%Y-%m-%dT%H:%M:%S.%f")
 
         if isAquiredThisWeek(addedDate):
-            # Parse Movie Title
+            # Parse Series Title
             seriesTitle = series.get("Name")
 
-            # Parse Movie Overview
+            # Parse Series Overview
             seriesOverview = series.get("Overview")
 
             # Parse Tag List
@@ -45,13 +53,14 @@ def main():
             # Parse Genre List
             seriesGenreList = ', '.join(series.get("Genres"))
 
-            # Parse Movie Poster URL
+            # Parse Series Poster URL
             seriesId = series.get("ProviderIds").get('Tmdb')
             tmdbApiKey = info.get('TMDB').get('API_KEY')
             response = httpGET(url=baseApiUrl.format(
                 seriesId=seriesId, apiKey=tmdbApiKey))
             responseDict = response.json()
 
+            # Bail out for current item if the poster is missing
             if responseDict.get('success') == False or len(responseDict.get('posters')) < 1:
                 print(
                     f'[WARN] TMDB Connection Error : Series Request for {seriesTitle}\nJSON : {responseDict}')
@@ -60,7 +69,7 @@ def main():
             imageFile = responseDict.get('posters')[0].get('file_path')
             seriesPosterUrl = baseImageUrl.format(imageId=imageFile)
 
-            # Parse Movie Release Year
+            # Parse Series Release Year
             if series.get("PremiereDate"):
                 seriesPremierDate = stringToDate(
                     series.get("PremiereDate"), "%Y-%m-%dT%H:%M:%S.%f")

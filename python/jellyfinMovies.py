@@ -4,14 +4,32 @@ from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, generate
 from json import load as loadJson
 from requests import get as httpGET
 
-info = loadJson(open("info.json"))
+info = loadJson(open("../configuration/info.json"))
 
 
 def main():
     client = jellyfinConnection()
 
-    recentlyAddedMovies = client.jellyfin.get_recently_added(
-        limit=1000, media='movie')
+    try:
+        recentlyAddedMovies = client.jellyfin.user_items(
+            handler="/Latest",
+            params={
+                'fields': [
+                    'DateCreated',
+                    'DateLastMediaAdded',
+                    'Tags',
+                    'Genres',
+                    'ProviderIds',
+                    'RemoteTrailers',
+                    'Overview'
+                ],
+                'includeItemTypes': ['Movie'],
+                'limit': 1000
+            }
+        )
+    except:
+        print('[ERROR] There was an error getting latest movies')
+        exit()
 
     newMovieList = []
     baseApiUrl = "https://api.themoviedb.org/3/movie/{movieId}/images?language=en&api_key={apiKey}"
@@ -41,7 +59,8 @@ def main():
                 movieId=movieId, apiKey=tmdbApiKey))
             responseDict = response.json()
 
-            if responseDict.get('success') == False:
+            # Bail out for current item if the poster is missing
+            if responseDict.get('success') == False or len(responseDict.get('posters')) < 1:
                 print(
                     f'[WARN] TMDB Connection Error : Movies Request for {movieTitle}\nJSON : {responseDict}')
                 continue
@@ -55,7 +74,7 @@ def main():
                     movie.get("PremiereDate"), "%Y-%m-%dT%H:%M:%S.%f")
                 movieYear = moviePremierDate.year
             else:
-                moviePremierDate = 'Unknown'
+                movieYear = 0000
 
             # Parse Content Rating
             if movie.get("OfficialRating"):
