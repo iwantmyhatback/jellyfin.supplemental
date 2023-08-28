@@ -11,8 +11,3 @@ while read -r variable; do
     export "${variable?}"
   fi
 done < environment.properties
-export ALREADY_SOURCED=TRUE
-
-
-
-

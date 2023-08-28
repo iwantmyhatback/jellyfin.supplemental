@@ -15,7 +15,7 @@ cd "${SCRIPT_DIR}" || exit
 PREVIOUS_COMMIT=$(git rev-list HEAD -n 1)
 git pull
 
-if [ "${PREVIOUS_COMMIT}" != "$(git rev-list HEAD -n 1)" ]; then
+if [ "${PREVIOUS_COMMIT}" != "$(git rev-list HEAD -n 1)" ] || [ "${FORCE_DOCKER_REBUILD:-}" = 'TRUE' ]; then
     echo "Found changes to jellyfin-supplemental... Rebuilding image"
     "${SCRIPT_DIR}/buildImage.sh"
 else
