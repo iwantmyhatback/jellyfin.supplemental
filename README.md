@@ -4,7 +4,7 @@ This is a small script set that leverages an existing Jellyfin setup and a Gmail
 
 The scripting should is POSIX compliant, and the python code uses python3 (tested with 3.11.4)
 
-See information on:
-[configuration](configuration/README.md)
-[python](python/README.md)
-[shell](shell/README.md)
+See information on:<br>
+[configuration](configuration/README.md)<br>
+[python](python/README.md)<br>
+[shell](shell/README.md)<br>
