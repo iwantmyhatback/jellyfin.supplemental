@@ -10,31 +10,36 @@ from email.mime.image import MIMEImage
 from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 
-TEST_MODE = str(osEnviron.get("TEST_MODE")).upper()
 
 infoFile = open("configuration/info.json")
 info = loadJson(infoFile)
 
 GMAIL = info.get("GMAIL")
-
 SCOPES = GMAIL.get("SCOPES")
 CLIENT_SECRET_FILE = GMAIL.get("CLIENT_SECRET_FILE")
 CREDENTIAL_LOCATION = GMAIL.get("CREDENTIAL_LOCATION")
 APPLICATION_NAME = GMAIL.get("APPLICATION_NAME")
 
 EMAIL = info.get("EMAIL")
-
 TO_LIST = EMAIL.get("TO_LIST")
 SENDER_STRING = EMAIL.get("SENDER_STRING")
 BCC_LIST = EMAIL.get("BCC_LIST")
 SUBJECT_STRING = EMAIL.get("SUBJECT_STRING")
 
-# Dont email everyone if youre testing
+
+TEST_MODE = str(osEnviron.get("TEST_MODE")).upper()
 if TEST_MODE in ["YES", "TRUE"]:
     BCC_LIST = []
 
 
-# Retrieve the credentials using google CLIENT_SECRET_FILE
+def main(plainMessage, htmlMessage):
+    to = TO_LIST
+    sender = SENDER_STRING
+    bcc = BCC_LIST
+    subject = SUBJECT_STRING
+    SendMessage(sender, to, bcc, subject, htmlMessage, plainMessage)
+
+
 def get_credentials():
     home_dir = osPath.expanduser("~")
     credential_dir = osPath.join(osGetCwd(), CREDENTIAL_LOCATION)
@@ -93,15 +98,3 @@ def CreateMessageHtml(sender, to, bcc, subject, msgHtml, msgPlain):
     message.attach(MIMEText(msgPlain, "plain"))
     message.attach(MIMEText(msgHtml, "html"))
     return {"raw": urlsafe_b64encode(message.as_bytes()).decode()}
-
-
-def main(plainMessage, htmlMessage):
-    to = TO_LIST
-    sender = SENDER_STRING
-    bcc = BCC_LIST
-    subject = SUBJECT_STRING
-    SendMessage(sender, to, bcc, subject, htmlMessage, plainMessage)
-
-
-if __name__ == "__main__":
-    main()

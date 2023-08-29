@@ -13,6 +13,8 @@ These variables are mostly used to make development testing easier on me
 
 ## info.json / info.remote.json (Example dummy data in: info.sample.json)
 
+Configuration information for the resources used to create and send the email content
+
 - EMAIL
   - TO_LIST : The email destination (generally my email)
   - SENDER_STRING : The email doing the sending (which has oAuth setup for the gmail API)

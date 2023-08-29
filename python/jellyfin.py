@@ -1,13 +1,12 @@
 from connection import jellyfinConnection
 from operator import itemgetter
-from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, generateHeader, posterNotFound
+from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, posterNotFound
 from json import load as loadJson
 from requests import get as httpGET
+from htmlProcessing import main as generateHtml
 
-# Load JSON from configuration file
+
 info = loadJson(open("configuration/info.json"))
-
-# Perfrom the Query, processing, and HTML generation
 
 
 def main(queryType):
@@ -17,8 +16,6 @@ def main(queryType):
     (plainMessage, htmlMessage) = generateHtml(newItemList, queryTypeSpecifics)
 
     return (plainMessage, htmlMessage)
-
-#
 
 
 def parseMediaType(queryType):
@@ -76,23 +73,24 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
     baseYoutube = "https://www.youtube.com/watch?v={trailerId}"
 
     for item in recentlyAddedItems:
-        # Check if the item was added this week
+
+        # Timeframe relevance check
         if item.get("DateCreated"):
             relevanceDate = item.get("DateCreated")
         elif item.get("DateLastMediaAdded"):
             relevanceDate = item.get("DateLastMediaAdded")
         else:
             continue
-
         addedDate = stringToDate(relevanceDate, "%Y-%m-%dT%H:%M:%S.%f")
         if isAquiredThisWeek(addedDate):
-            # Parse uprocessed Item values : (Title, Overview, Tag List, Genre List)
+
+            # Title, Overview, Tag List, Genre List
             itemTitle = item.get("Name")
             itemOverview = item.get("Overview")
             itemTagList = ', '.join(item.get("Tags"))
             itemGenreList = ', '.join(item.get("Genres"))
 
-            # Parse Movie Poster URL
+            # Movie Poster URL
             tmdbId = item.get("ProviderIds").get('Tmdb')
             tmdbApiKey = info.get('TMDB').get('API_KEY')
             response = httpGET(
@@ -103,14 +101,13 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
             )
             responseDict = response.json()
 
-            # Bail out for current item if the poster is missing
             if responseDict.get('success') == False or len(responseDict.get('posters')) < 1:
                 itemPosterUrl = posterNotFound
             else:
                 imageFile = responseDict.get('posters')[0].get('file_path')
                 itemPosterUrl = baseImageUrl.format(imageId=imageFile)
 
-            # Parse Movie Release Year
+            # Movie Release Year
             if item.get("PremiereDate"):
                 itemPremierDate = stringToDate(
                     item.get("PremiereDate"), "%Y-%m-%dT%H:%M:%S.%f")
@@ -118,20 +115,20 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
             else:
                 itemYear = 0000
 
-            # Parse Content Rating
+            # Content Rating
             if item.get("OfficialRating"):
                 itemContentRating = item.get("OfficialRating")
             else:
                 itemContentRating = 'Unknown'
 
-            # Parse Critic Rating
+            # Critic Rating
             if item.get("CriticRating"):
                 itemCriticRating = "Critics: {}% ".format(
                     item.get("CriticRating"))
             else:
                 itemCriticRating = ''
 
-            # Parse Community Rating
+            # Community Rating
             if item.get("CommunityRating"):
                 withCritic = '& ' if itemCriticRating != '' else ''
                 roundedRating = round(float(item.get("CommunityRating")), 1)
@@ -140,7 +137,7 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
             else:
                 itemCommunityRating = ''
 
-            # Parse Trailer URL
+            # Trailer URL
             itemTrailerUrl = baseYoutube.format(trailerId='dQw4w9WgXcQ')
             if len(item.get("RemoteTrailers")) > 0:
                 trailerElement = item.get("RemoteTrailers")[0]
@@ -169,50 +166,3 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
             )
     newItemList = sorted(newItemList, key=itemgetter("year"), reverse=True)
     return newItemList
-
-
-def generateHtml(newItemList, queryTypeSpecifics):
-    (plainMessage, htmlMessage) = generateHeader(
-        f'{queryTypeSpecifics.get("name")}(s)', len(newItemList))
-
-    for item in newItemList:
-        plainMessage += f"""
-            {item.get('title')}\n
-            Content Rating: {item.get('content')}\n
-            {item.get('community')}
-            {item.get('critic')}\n
-            Year: {item.get('year')}\n
-            Tags: {item.get('tags')}\n
-            Genres: {item.get('genres')}\n
-            Summary: {item.get('overview')}\n
-            Trailer: {item.get('trailer')}\n\n
-        """
-        htmlMessage += (
-            f'<div style="display: flex;">'
-            f'<div style="flex: 1;margin: 5% 2% 5% 2%;">'
-            f"<img style=\"width:25vw;\" src=\"{item.get('image')}\" />"
-            f"</div>"
-            f'<div style="flex: 5;margin: 8% 2% 8% 2%;">'
-            f"<b style=\"font-size:1.5em;\">{item.get('title')}</b>"
-            f"<br>"
-            f"<b>Year: </b><span>{item.get('year')}</span>"
-            f"<br>"
-            f"<b>Content Rating: </b><span>{item.get('content')}</span>"
-            f"<br>"
-            f"<b>Quality Ratings: </b><span>{item.get('community')}</span><span>{item.get('critic')}</span>"
-            f"<br>"
-            f"<b>Tags: </b><span>{item.get('tags')}</span>"
-            f"<br>"
-            f"<b>Genres: </b><span>{item.get('genres')}</span>"
-            f"<br>"
-            f"<b>Summary: </b><span>{item.get('overview')}</span>"
-            f"<br><br>"
-            f"<a href=\"{item.get('trailer')}\">Trailer</a>"
-            f"<br>"
-            f"</div>"
-            f"<br>"
-            f"</div>"
-            f"<br>"
-        )
-
-    return (plainMessage, htmlMessage)
