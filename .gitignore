@@ -9,6 +9,7 @@ pythonEnvironment
 __pycache__
 output.log
 .DS_Store
+.legacy
 
 
 ###### Default git ignore from github for python ###
