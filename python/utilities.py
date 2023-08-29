@@ -42,24 +42,6 @@ def replaceEveryNth(analysisString, substitutionTarget, targetReplacement, nth):
     return analysisString
 
 
-# generateHeader generates the formatted header for the email in both plaintext and html
-# python formatting provider returning them in a tuple
-
-
-def generateHeader(mediaType, numberOfMovies):
-    digits = len(str(numberOfMovies))
-    mediaTypeLength = len(str(mediaType))
-    segmentOne = "+------------+"
-    segmentTwo = f"| {numberOfMovies} {mediaType} Updated |"
-    segmentThree = "+------------+"
-    for i in range(1, (digits + mediaTypeLength), 1):
-        segmentOne = segmentOne.replace("-", "--", 1)
-        segmentThree = segmentThree.replace("-", "--", 1)
-    plainHeader = f"{segmentOne}\n{segmentTwo}\n{segmentThree}\n"
-    htmlHeader = f'<h2 style="font-family:courier;">{segmentOne}<br>{segmentTwo}<br>{segmentThree}<br></h2>'
-    return (plainHeader, htmlHeader)
-
-
 # posterNotFound returns poster not found png data ... hiding it here because the string is massive and unsightly
 
 def posterNotFound():
