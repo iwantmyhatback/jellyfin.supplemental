@@ -29,4 +29,4 @@ fi
 pip install --quiet --requirement requirements.txt
 # pip freeze > requirements.txt
 
-python3 python/main.py
+python3 -Bu python/main.py
