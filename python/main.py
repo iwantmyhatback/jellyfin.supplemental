@@ -1,9 +1,8 @@
 from gmail import main as sendGmailMessage
-from jellyfinMovies import main as jellyfinMovies
-from jellyfinSeries import main as jellyfinSeries
+from jellyfin import main as getJellyfinLatest
 
-(moviePlainMessage, movieHtmlMessage) = jellyfinMovies()
-(seriesPlainMessage, seriesHtmlMessage) = jellyfinSeries()
+(moviePlainMessage, movieHtmlMessage) = getJellyfinLatest('Movie')
+(seriesPlainMessage, seriesHtmlMessage) = getJellyfinLatest('Series')
 
 plainMessage = f"{moviePlainMessage}<br><br>{seriesPlainMessage}"
 htmlMessage = f"{movieHtmlMessage}<br><br>{seriesHtmlMessage}"
