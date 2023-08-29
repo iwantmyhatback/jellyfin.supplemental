@@ -27,4 +27,5 @@ else
     echo "[INFO] No changes to jellyfin-supplemental"
 fi
 
+echo "[DOCKER] Start the Docker run for jellyfin-supplemental:latest"
 docker run --env-file "${REPO_ROOT_DIR}/configuration/environment.properties" --rm --name jellyfin-supplemental jellyfin-supplemental:latest ${REPO_ROOT_DIR}/shell/main.sh

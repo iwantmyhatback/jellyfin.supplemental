@@ -12,6 +12,9 @@ else
   echo "[ENV] Skipping additional sourcing because ALREADY_SOURCED is defined"
 fi
 
+echo "[DOCKER] Start Docker Python image update (Pull)"
 docker pull python
+echo "[DOCKER] Remove old jellyfin-supplemental image"
 docker image rm jellyfin-supplemental
+echo "[DOCKER] Build new jellyfin-supplemental image"
 docker build --build-arg PYENV_LOCATION --build-arg DIRNAME="${REPO_ROOT_DIR}" -t jellyfin-supplemental ./
