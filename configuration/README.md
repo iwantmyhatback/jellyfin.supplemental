@@ -1,6 +1,6 @@
 # jellyfin.supplemental/configuration
 
-## environment.properties
+### environment.properties
 
 environment variables to be sourced for the shell scripts (Booleans accept "TRUE|FALSE")
 These variables are mostly used to make development testing easier on me
@@ -11,7 +11,7 @@ These variables are mostly used to make development testing easier on me
 - FORCE_DOCKER_REBUILD : forces shell/runRoutine.sh to run shell/buildImage.sh regardless of commit changes
 - ALREADY_SOURCED : used to check the environment for previous sourcing to prevent rendundant sourcing
 
-## info.json / info.remote.json (Example dummy data in: info.sample.json)
+### info.json / info.remote.json (Example dummy data in: info.sample.json)
 
 Configuration information for the resources used to create and send the email content
 
