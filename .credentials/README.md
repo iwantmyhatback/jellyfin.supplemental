@@ -1,10 +1,10 @@
 # jellyfin.supplemental/.credentials
 
-Storage location for credential tokens and secret files. I have included some sample files for the purpose of debugging issues with configuration, though _the only file that the user should need to put into place is the `<repoRoot>/.credentials/gmail-secret-file.json`_
+Storage location for credential tokens and secret files. I have included some sample files for the purpose of debugging issues with configuration, though **the only file that the user should need to put into place is the `<repoRoot>/.credentials/gmail-secret-file.json`**
 
 ### gmail-python-email-send.json
 
-_This file is generated_ by the `<repoRoot>/python/gmail.py` execution using the Gmail provided secrets file `<repoRoot>/.credentials/gmail-secret-file.json` and configuration information in `<repoRoot>/configuration/info*.json`.
+**This file is generated** by the `<repoRoot>/python/gmail.py` execution using the Gmail provided secrets file `<repoRoot>/.credentials/gmail-secret-file.json` and configuration information in `<repoRoot>/configuration/info*.json`.
 
 ### gmail-python-email-send.sample.json
 
@@ -12,7 +12,7 @@ A sample of what a correct `<repoRoot>/.credentials/gmail-python-email-send.json
 
 ### gmail-secret-file.json
 
-_This file is placed here by the user_ after being generated in the Google Developer Console. It is used by oAuth to authenticate with the Gmail sending account
+**This file is placed here by the user** after being generated in the Google Developer Console. It is used by oAuth to authenticate with the Gmail sending account
 
 ### gmail-secret-file.sample.json
 
@@ -20,7 +20,7 @@ A sample of what a correct `<repoRoot>/.credentials/gmail-secret-file.json` shou
 
 ### jellyfin-credentials.json
 
-_This file is generated_ by the `<repoRoot>/python/connection.py` execution using the Jellyfin credentials and server information provided in the configuration file `<repoRoot>/configuration/info*.json`
+**This file is generated** by the `<repoRoot>/python/connection.py` execution using the Jellyfin credentials and server information provided in the configuration file `<repoRoot>/configuration/info*.json`
 
 ### jellyfin-credentials.sample.json
 
