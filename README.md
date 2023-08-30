@@ -13,9 +13,9 @@ The scripting should is POSIX compliant (usable with most modern shells), and th
 To get things running user will need to:
 
 1. Have a configured Jellyin instance with valid user credentials
-2. Create and account and Provide a Gmail secret file (see [credentials](.credentials/README.md))
+2. Create and account and Provide a Gmail secret file (see [Credentials Readme](.credentials/README.md))
 3. Create and account and provide a TMDB API key (see [API Key](https://www.themoviedb.org/settings/api))
-4. Provide all the required information for the configuration files (see [configuration](configuration/README.md))
+4. Provide all the required information for the configuration files (see [Configuration Readme](configuration/README.md))
 5. Authorize the Gmail consent screen on first run
 6. Set a `cron` task (or some other scheduling) to run weekly
 
