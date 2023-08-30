@@ -1,13 +1,14 @@
 # jellyfin.supplemental
 
-This is a small script set which leverages a few external resources to gather media information and send an email which describes the Movies and Shows which have been updated in the Jellyfin instance within the past 7 days. There are a couple prerequisites to running this script:<br>
+This is a small script set which leverages a the Gmail API to send an email which describes the Movies and Shows which have been updated on provided Jellyfin instance within the past 7 days. There are a couple prerequisites to running this script:<br>
 
-- An existing [Jellyfin](https://jellyfin.org) setup holding personal media collection
+- An existing [Jellyfin](https://jellyfin.org) setup containing a personal media collection
 - A [Google Cloud Account](https://console.cloud.google.com/) for leveraging the Gmail API to send an email
+- (Optional) A docker installation on the machine running the script
 
 Though designed to run through a Docker container using the entry script `<repoRoot>/shell/runRoutine.sh` it can also be run locally without a Docker container using `<repoRoot>/shell/main.sh`.
 
-The scripting is POSIX compliant (usable with most modern shells), and the python code uses Python3 (tested with 3.11.4)
+The shell scripting is POSIX compliant (usable with most modern shells), and the python code uses Python3 (tested with 3.11.4)
 
 **To get things running user will need to:**
 
