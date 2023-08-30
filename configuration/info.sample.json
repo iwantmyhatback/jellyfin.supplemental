@@ -18,8 +18,5 @@
     "PASSWORD": "somePasswordValue",
     "CREDENTIAL_LOCATION" : ".credentials",
     "CLIENT_SECRET_FILE" : "jellyfin-credentials.json"
-  },
-  "TMDB":{
-    "API_KEY" : "valueForValidTmdbApiKey"
   }
 }

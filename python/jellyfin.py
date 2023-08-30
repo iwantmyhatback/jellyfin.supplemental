@@ -1,12 +1,13 @@
 from connection import jellyfinConnection
 from operator import itemgetter
-from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, posterNotFound
-from json import load as loadJson
+from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, getLastUrlSegment
+from json import load as loadJson, dumps as dumpJson
 from requests import get as httpGET
 from htmlProcessing import main as generateHtml
 
 
 info = loadJson(open("configuration/info.json"))
+client = jellyfinConnection()
 
 
 def main(queryType):
@@ -29,13 +30,11 @@ def parseMediaType(queryType):
         'Movie': {
             'name': 'Movie',
             'mediaTypesList': ['Movie'],
-            'tmdbUrl': "https://api.themoviedb.org/3/movie/{tmdbId}/images?language=en&api_key={apiKey}",
             'fields': ['DateCreated', *defaultFields]
         },
         'Series': {
             'name': 'Series',
             'mediaTypesList': ['Series'],
-            'tmdbUrl': "https://api.themoviedb.org/3/tv/{tmdbId}/images?language=en&api_key={apiKey}",
             'fields': ['DateLastMediaAdded', *defaultFields]
         }
     }
@@ -49,7 +48,7 @@ def parseMediaType(queryType):
 
 
 def queryJellyfin(queryTypeSpecifics):
-    client = jellyfinConnection()
+    # client = jellyfinConnection()
 
     try:
         recentlyAddedItems = client.jellyfin.user_items(
@@ -69,7 +68,6 @@ def queryJellyfin(queryTypeSpecifics):
 
 def extractItemData(recentlyAddedItems, queryTypeSpecifics):
     newItemList = []
-    baseImageUrl = "http://image.tmdb.org/t/p/w185/{imageId}"
     baseYoutube = "https://www.youtube.com/watch?v={trailerId}"
 
     for item in recentlyAddedItems:
@@ -91,21 +89,7 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
             itemGenreList = ', '.join(item.get("Genres"))
 
             # Movie Poster URL
-            tmdbId = item.get("ProviderIds").get('Tmdb')
-            tmdbApiKey = info.get('TMDB').get('API_KEY')
-            response = httpGET(
-                url=queryTypeSpecifics.get('tmdbUrl').format(
-                    tmdbId=tmdbId,
-                    apiKey=tmdbApiKey
-                )
-            )
-            responseDict = response.json()
-
-            if responseDict.get('success') == False or len(responseDict.get('posters')) < 1:
-                itemPosterUrl = posterNotFound
-            else:
-                imageFile = responseDict.get('posters')[0].get('file_path')
-                itemPosterUrl = baseImageUrl.format(imageId=imageFile)
+            itemPosterUrl = getRemoteImage(item)
 
             # Movie Release Year
             if item.get("PremiereDate"):
@@ -166,3 +150,39 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
             )
     newItemList = sorted(newItemList, key=itemgetter("year"), reverse=True)
     return newItemList
+
+
+def getRemoteImage(item):
+    baseImageUrl = "http://image.tmdb.org/t/p/w185/{imageId}"
+    itemId = item.get('Id')
+
+    response = client.jellyfin.items(
+        handler=f"/{itemId}/RemoteImages/",
+        params={
+            'providerName': 'TheMovieDb',
+            'type': 'Primary',
+            'includeAllLanguages': False
+        }
+    )
+
+    finalImage = {
+        'imageFile': '',
+        'rating': -1,
+        'votes': -1,
+    }
+
+    for image in response.get('Images'):
+
+        if image.get('CommunityRating') > finalImage.get('rating') and image.get('VoteCount') >= finalImage.get('votes'):
+            imageFile = getLastUrlSegment(image.get('Url'))
+            imageRating = image.get('CommunityRating')
+            imageVotes = image.get('VoteCount')
+
+            finalImage.update(imageFile=imageFile)
+            finalImage.update(rating=imageRating)
+            finalImage.update(votes=imageVotes)
+
+    if finalImage.get('imageFile') == '':
+        return 'https://www.movienewz.com/img/films/poster-holder.jpg'
+    else:
+        return baseImageUrl.format(imageId=imageFile)

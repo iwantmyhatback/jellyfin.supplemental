@@ -33,5 +33,3 @@ Configuration information for the resources used to create and send the email co
   - PASSWORD : Jellyfin User Password
   - CREDENTIAL_LOCATION : Location for Jellyfin generated/provided credentials (default: ".credentials")
   - CLIENT_SECRET_FILE : Name of the secret file from Jellyfin (default:"jellyfin-credentials.json")
-- TMDB
-  - API_KEY : Valid API key for TMDB (used for Poster images)
