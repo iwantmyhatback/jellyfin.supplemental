@@ -1,16 +1,16 @@
 {
-  "access_token": "someAccessTokenHash",
-  "client_id": "someClientIdHash.apps.googleusercontent.com",
-  "client_secret": "someClientSecretHash",
-  "refresh_token": "someRefreshTokenHash",
-  "token_expiry": "YYYY-MM-DDTHH:MM:SSZ",
+  "access_token": "<someAccessTokenHash>",
+  "client_id": "<someClientIdHash>.apps.googleusercontent.com",
+  "client_secret": "<someClientSecretHash>",
+  "refresh_token": "<someRefreshTokenHash>",
+  "token_expiry": "<YYYY-MM-DDTHH:MM:SSZ>",
   "token_uri": "https://oauth2.googleapis.com/token",
-  "user_agent": "someUserAgent",
+  "user_agent": "<someUserAgent>",
   "revoke_uri": "https://oauth2.googleapis.com/revoke",
   "id_token": null,
   "id_token_jwt": null,
   "token_response": {
-    "access_token": "someAccessTokenHash",
+    "access_token": "<someAccessTokenHash>",
     "expires_in": 3599,
     "scope": "https://www.googleapis.com/auth/gmail.send",
     "token_type": "Bearer"

@@ -1,21 +1,21 @@
 {
   "EMAIL" : {
-    "TO_LIST" : ["toEmail@provider.ext"],
-    "SENDER_STRING" : "senderEmail@gmail.com",
-    "BCC_LIST" :  ["toEmail1@provider.ext","toEmail2@provider.ext"],
-    "SUBJECT_STRING" : "SomeSubjectHere"
+    "TO_LIST" : ["<toEmail@provider.ext>"],
+    "SENDER_STRING" : "<sendingEmailAddress>",
+    "BCC_LIST" :  ["<toEmail1@provider.ext>","<toEmail2@provider.ext>"],
+    "SUBJECT_STRING" : "<SomeSubjectHere>"
   },
   "GMAIL" : {
     "CLIENT_SECRET_FILE" : "gmail-secret-file.json",
     "CREDENTIAL_LOCATION" : ".credentials",
     "SCOPES": "https://www.googleapis.com/auth/gmail.send",
-    "APPLICATION_NAME" : "YourApplicationName"
+    "APPLICATION_NAME" : "<projectName>"
   },
   "JELLYFIN":{
-    "SERVER_URL" : "someServerUrlOrIpAddress",
-    "PORT" : "portNumber",
-    "USERNAME": "someUserNameValue",
-    "PASSWORD": "somePasswordValue",
+    "SERVER_URL" : "http://<someServerUrlOrIpAddress>",
+    "PORT" : "<portNumber>",
+    "USERNAME": "<someUserNameValue>",
+    "PASSWORD": "<somePasswordValue>",
     "CREDENTIAL_LOCATION" : ".credentials",
     "CLIENT_SECRET_FILE" : "jellyfin-credentials.json"
   }
