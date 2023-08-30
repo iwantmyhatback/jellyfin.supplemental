@@ -4,7 +4,7 @@ This is a small script set which leverages a the Gmail API to send an email whic
 
 - An existing [Jellyfin](https://jellyfin.org) setup containing a personal media collection
 - A [Google Cloud Account](https://console.cloud.google.com/) for leveraging the Gmail API to send an email
-- (Optional) A docker installation on the machine running the script
+- (Optional) A Docker installation on the machine running the script
 
 Though designed to run through a Docker container using the entry script `<repoRoot>/shell/runRoutine.sh` it can also be run locally without a Docker container using `<repoRoot>/shell/main.sh`.
 
