@@ -2,8 +2,8 @@
 
 This is a small script set which leverages a the Gmail API to send an email which describes the Movies and Shows which have been updated on provided Jellyfin instance within the past 7 days. There are a couple prerequisites to running this script:<br>
 
-- An existing [Jellyfin](https://jellyfin.org) setup containing a personal media collection
-- A [Google Cloud Account](https://console.cloud.google.com/) for leveraging the Gmail API to send an email
+- (Required) An existing [Jellyfin](https://jellyfin.org) setup containing a personal media collection
+- (Required) A [Google Cloud Account](https://console.cloud.google.com/) for leveraging the Gmail API to send an email
 - (Optional) A Docker installation on the machine running the script
 
 Though designed to run through a Docker container using the entry script `<repoRoot>/shell/runRoutine.sh` it can also be run locally without a Docker container using `<repoRoot>/shell/main.sh`.
