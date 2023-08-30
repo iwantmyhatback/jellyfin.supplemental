@@ -3,18 +3,17 @@
     "TO_LIST" : ["toEmail@provider.ext"],
     "SENDER_STRING" : "senderEmail@gmail.com",
     "BCC_LIST" :  ["toEmail1@provider.ext","toEmail2@provider.ext"],
-    "SUBJECT_STRING" : "Some Subject Here"
+    "SUBJECT_STRING" : "SomeSubjectHere"
   },
   "GMAIL" : {
     "CLIENT_SECRET_FILE" : "gmail-secret-file.json",
     "CREDENTIAL_LOCATION" : ".credentials",
     "SCOPES": "https://www.googleapis.com/auth/gmail.send",
-    "APPLICATION_NAME" : "Your Application Name"
+    "APPLICATION_NAME" : "YourApplicationName"
   },
   "JELLYFIN":{
     "SERVER_URL" : "someServerUrlOrIpAddress",
     "PORT" : "portNumber",
-    "API_KEY" : "apiKey",
     "USERNAME": "someUserNameValue",
     "PASSWORD": "somePasswordValue",
     "CREDENTIAL_LOCATION" : ".credentials",
