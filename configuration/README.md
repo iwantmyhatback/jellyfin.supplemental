@@ -18,7 +18,7 @@ Configuration information for the resources used to create and send the email co
 - EMAIL
   - TO_LIST : The email destination (generally my email)
   - SENDER_STRING : The email doing the sending (which has oAuth setup for the gmail API)
-  - BCC_LIST : Any other email address which should receive the email
+  - BCC_LIST : Any other email address which should receive the email (empty array for none)
   - SUBJECT_STRING : Email subject line string
 - GMAIL
   - CLIENT_SECRET_FILE : Name of the secret file from Gmail (default:"gmail-secret-file.json")
@@ -34,4 +34,4 @@ Configuration information for the resources used to create and send the email co
   - CREDENTIAL_LOCATION : Location for Jellyfin generated/provided credentials (default: ".credentials")
   - CLIENT_SECRET_FILE : Name of the secret file from Jellyfin (default:"jellyfin-credentials.json")
 - TMDB
-  - API_KEY : Valid API key for TMDB (used for Posters)
+  - API_KEY : Valid API key for TMDB (used for Poster images)
