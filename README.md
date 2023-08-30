@@ -10,9 +10,16 @@ Though designed to run through a Docker container using the entry script `<repoR
 
 The scripting should is POSIX compliant (usable with most modern shells), and the python code uses Python3 (tested with 3.11.4)
 
-User will need to provide a Gmail secret file (see [credentials](.credentials/README.md)) and all the required information for the configuration files (see [configuration](configuration/README.md))
+To get things running user will need to:
 
-See README's for:<br>
+1. Have a configured Jellyin instance with valid user credentials
+2. Create and account and Provide a Gmail secret file (see [credentials](.credentials/README.md))
+3. Create and account and provide a TMDB API key (see [API Key](https://www.themoviedb.org/settings/api))
+4. Provide all the required information for the configuration files (see [configuration](configuration/README.md))
+5. Authorize the Gmail consent screen on first run
+6. Set a `cron` task (or some other scheduling) to run weekly
+
+For additional information see README's for:<br>
 [credentials](.credentials/README.md)<br>
 [configuration](configuration/README.md)<br>
 [python](python/README.md)<br>
