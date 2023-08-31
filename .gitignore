@@ -3,7 +3,8 @@
 .credentials/gmail-python-email-send.json
 .credentials/jellyfin-credentials.json
 
-# User information files
+# User information & configuration files
+configuration/environment.properties
 configuration/info.json
 configuration/info.remote.json
 
