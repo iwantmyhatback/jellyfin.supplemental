@@ -18,9 +18,9 @@ git pull
 
 if [ "${PREVIOUS_COMMIT}" != "$(git rev-list HEAD -n 1)" ] || [ "${FORCE_DOCKER_REBUILD:-}" = 'TRUE' ]; then
     if [ "${FORCE_DOCKER_REBUILD:-}" = 'TRUE' ]; then
-        echo "[INFO] FORCE_DOCKER_REBUILD is active... Rebuilding image"
+        echo "[INFO] FORCE_DOCKER_REBUILD is active .......... Rebuilding image"
     else
-        echo "[INFO] Found changes to jellyfin-supplemental... Rebuilding image"
+        echo "[INFO] Found changes to jellyfin-supplemental .......... Rebuilding image"
     fi
     "${REPO_ROOT_DIR}/shell/buildImage.sh"
 else

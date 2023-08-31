@@ -9,6 +9,7 @@ configuration/info.json
 configuration/info.remote.json
 
 # Undesirable files
+.vscode
 lastOutput.log
 output.log
 pythonEnvironment

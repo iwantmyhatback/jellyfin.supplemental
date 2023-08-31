@@ -77,10 +77,9 @@ def SendMessage(sender, to, bcc, subject, msgHtml, msgPlain):
 
 def SendMessageInternal(service, user_id, message):
     try:
-        message = (
-            service.users().messages().send(userId=user_id, body=message).execute()
-        )
-        print(f"[INFO] Gmail Message Sent ... ID : {message['id']}")
+        message = service.users().messages().send(
+            userId=user_id, body=message).execute()
+        print(f"[INFO] Gmail Message Sent .......... ID : {message['id']}")
         return message
     except apiErrors.HttpError as error:
         print(f"[ERROR] An error occurred: {error}")
