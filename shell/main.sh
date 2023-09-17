@@ -12,16 +12,16 @@ cd "${REPO_ROOT_DIR}" || exit
 
 
 if [ -z "${ALREADY_SOURCED:-}" ]; then
-  . "${REPO_ROOT_DIR}/shell/sourceEnvironment.sh"
+    . "${REPO_ROOT_DIR}/shell/sourceEnvironment.sh"
 else
-  echo "[ENV] Skipping additional sourcing because ALREADY_SOURCED is defined"
+    echo "[INFO] [ENV] Skipping additional sourcing because ALREADY_SOURCED is defined"
 fi
 
 if [ -d "${PYENV_LOCATION}" ]; then
-  echo "[INFO] ${PYENV_LOCATION} does exist."
+    echo "[INFO] [PY_ENV] ${PYENV_LOCATION} does exist."
 else
-  echo "[INFO] ${PYENV_LOCATION} does not exist"
-  python3 -m venv "${PYENV_LOCATION}"
+    echo "[INFO] [PY_ENV] ${PYENV_LOCATION} does not exist"
+    python3 -m venv "${PYENV_LOCATION}"
 fi
 
 . "${PYENV_LOCATION}/bin/activate"
