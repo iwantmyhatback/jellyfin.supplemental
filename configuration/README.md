@@ -5,11 +5,12 @@
 environment variables to be sourced for the shell scripts (Booleans accept "TRUE|FALSE")
 These variables are mostly used to make development testing easier on me
 
-- PYENV_LOCATION : sets the location for the python3 venv
-- TEST_MODE : removes all the BCC emails so the emails only come to me
-- REMOTE_CONNECTION : forces my secondary config file (info.remote.json) for using a VPN connection
-- FORCE_DOCKER_REBUILD : forces shell/runRoutine.sh to run shell/buildImage.sh regardless of commit changes
-- ALREADY_SOURCED : used to check the environment for previous sourcing to prevent rendundant sourcing
+- PYENV_LOCATION : Sets the location for the python3 venv \[ somePath \]
+- PYTHON_LOG_LEVEL : Sets the log level for python logging module \[ DEBUG | INFO | WARNING | ERROR | CRITICAL \]
+- TEST_MODE : Removes all the BCC emails so the emails only come to me \[ TRUE | FALSE \]
+- REMOTE_CONNECTION : Forces my secondary config file (info.remote.json) for using a VPN connection \[ TRUE | FALSE \]
+- FORCE_DOCKER_REBUILD : Forces shell/runRoutine.sh to run shell/buildImage.sh regardless of commit changes \[ TRUE | FALSE \]
+- ALREADY_SOURCED : Should not be modified. Used to check the environment for previous sourcing to prevent rendundant sourcing \[ TRUE | FALSE \]
 
 ### info.json / info.remote.json (Example dummy data in: info.sample.json)
 
