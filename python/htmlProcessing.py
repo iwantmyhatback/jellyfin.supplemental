@@ -1,9 +1,17 @@
+from json import load as loadJson, dumps as dumpsJson
+import logging as log
+
 
 def main(newItemList, queryTypeSpecifics):
+    log.debug(
+        f'[FUNCTION] htmlProcessing/main( \n{dumpsJson(newItemList, indent=2)}, \n{dumpsJson(queryTypeSpecifics, indent=2)} )')
+
     (plainMessage, htmlMessage) = generateHeader(
         f'{queryTypeSpecifics.get("name")}(s)', len(newItemList))
 
     for item in newItemList:
+        log.debug(f'[VALUE] item : \n{dumpsJson(item, indent=2)}')
+
         plainMessage += f"""
             {item.get('title')}\n
             Content Rating: {item.get('content')}\n
@@ -15,6 +23,8 @@ def main(newItemList, queryTypeSpecifics):
             Summary: {item.get('overview')}\n
             Trailer: {item.get('trailer')}\n\n
         """
+        log.debug(f'[VALUE] plainMessage : {plainMessage}')
+
         htmlMessage += (
             f'<div style="display: flex;">'
             f'<div style="flex: 1;margin: 5% 2% 5% 2%;">'
@@ -42,7 +52,9 @@ def main(newItemList, queryTypeSpecifics):
             f"</div>"
             f"<br>"
         )
-
+        log.debug(f'[VALUE] htmlMessage : {htmlMessage}')
+    log.debug(
+        f'[RETURN] htmlProcessing/main : \n{plainMessage} \n{htmlMessage}')
     return (plainMessage, htmlMessage)
 
 
@@ -50,6 +62,8 @@ def main(newItemList, queryTypeSpecifics):
 # python formatting provider returning them in a tuple
 
 def generateHeader(mediaType, numberOfMovies):
+    log.debug(
+        f'[FUNCTION] htmlProcessing/generateHeader({mediaType}, {numberOfMovies} )')
     digits = len(str(numberOfMovies))
     mediaTypeLength = len(str(mediaType))
     segmentOne = "+------------+"
@@ -60,4 +74,6 @@ def generateHeader(mediaType, numberOfMovies):
         segmentThree = segmentThree.replace("-", "--", 1)
     plainHeader = f"{segmentOne}\n{segmentTwo}\n{segmentThree}\n"
     htmlHeader = f'<h2 style="font-family:courier;">{segmentOne}<br>{segmentTwo}<br>{segmentThree}<br></h2>'
+    log.debug(
+        f'[RETURN] htmlProcessing/generateHeader : \n{plainHeader} \n{htmlHeader}')
     return (plainHeader, htmlHeader)

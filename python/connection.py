@@ -1,22 +1,27 @@
 from jellyfin_apiclient_python import JellyfinClient
-from json import load as loadJson, dump as dumpJson
+from json import load as loadJson, dumps as dumpsJson, dump as dumpJson
 from os import environ as osEnviron, path as osPath
+import logging as log
 
 # Check whether we want to use secondary JSON file (mostly used for testing on a secondary machine)
 REMOTE_CONNECTION = str(osEnviron.get("REMOTE_CONNECTION")).upper()
 
 # Load the JSON file
 if REMOTE_CONNECTION in ["YES", "TRUE"]:
-    print(
-        f"[ENV] REMOTE_CONNECTION={REMOTE_CONNECTION} passed in environment ..........")
+    log.info(
+        f'[ENV] REMOTE_CONNECTION={REMOTE_CONNECTION} passed in environment ..........')
     infoFile = open("configuration/info.remote.json")
+
 else:
     infoFile = open("configuration/info.json")
 
+
 info = loadJson(infoFile)
+log.debug(f'[LOAD] configuration/info.json : \n{dumpsJson(info, indent=2)}')
 
 
 def jellyfinConnection():
+    log.debug('[FUNCTION] connection/jellyfinConnection()')
     JELLYFIN = info.get("JELLYFIN")
     SERVER_URL = JELLYFIN.get("SERVER_URL")
     PORT = JELLYFIN.get("PORT")
@@ -27,8 +32,11 @@ def jellyfinConnection():
     CREDENTIAL_FILE = f"{CREDENTIAL_LOCATION}/{CLIENT_SECRET_FILE}"
 
     client = JellyfinClient()
-    client.config.app('jellyfin.supplemental', '0.0.1',
-                      'administratorsMachine', 'adminMach')
+    client.config.app('jellyfin.supplemental',
+                      '0.0.1',
+                      'administratorsMachine',
+                      'adminMach'
+                      )
     client.config.data["auth.ssl"] = True
 
     if not osPath.isfile(CREDENTIAL_FILE):
@@ -43,4 +51,5 @@ def jellyfinConnection():
     credentialFile = open(CREDENTIAL_FILE)
     credentials = loadJson(credentialFile)
     client.authenticate({"Servers": [credentials]}, discover=False)
+    log.debug(f'[RETURN] connection/jellyfinConnection : {client}')
     return client
