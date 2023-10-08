@@ -1,6 +1,7 @@
 #! /usr/bin/env sh
 
 # Export the environment variables set in configuration/environment.properties
+# and set the indicator that the importing has been done to prevent redundant executions
 
 REPO_ROOT_DIR="$(git rev-parse --show-toplevel)"
 cd "${REPO_ROOT_DIR}" || exit

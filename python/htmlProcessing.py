@@ -2,6 +2,34 @@ from json import load as loadJson, dumps as dumpsJson
 import logging as log
 
 
+#################
+## Definitions ##
+#################
+
+# generateHeader() Generates the formatted header for the email in both plaintext and html
+def generateHeader(mediaType, numberOfMovies):
+    log.debug(
+        f'[FUNCTION] htmlProcessing/generateHeader({mediaType}, {numberOfMovies})')
+    digits = len(str(numberOfMovies))
+    mediaTypeLength = len(str(mediaType))
+    segmentOne = "+------------+"
+    segmentTwo = f"| {numberOfMovies} {mediaType} Updated |"
+    segmentThree = "+------------+"
+    for i in range(1, (digits + mediaTypeLength), 1):
+        segmentOne = segmentOne.replace("-", "--", 1)
+        segmentThree = segmentThree.replace("-", "--", 1)
+    plainHeader = f"{segmentOne}\n{segmentTwo}\n{segmentThree}\n"
+    htmlHeader = f'<h2 style="font-family:courier;">{segmentOne}<br>{segmentTwo}<br>{segmentThree}<br></h2>'
+    log.debug(
+        f'[RETURN] htmlProcessing/generateHeader : \n{plainHeader} \n{htmlHeader}')
+    return (plainHeader, htmlHeader)
+
+
+################
+## Executions ##
+################
+
+# main() Performs the functionality of this file. Processing the Jellyfin data into Plain Text and HTML email bodies
 def main(newItemList, queryTypeSpecifics):
     log.debug(
         f'[FUNCTION] htmlProcessing/main(\n{dumpsJson(newItemList, indent=2)}, \n{dumpsJson(queryTypeSpecifics, indent=2)})')
@@ -56,24 +84,3 @@ def main(newItemList, queryTypeSpecifics):
     log.debug(
         f'[RETURN] htmlProcessing/main : \n{plainMessage} \n{htmlMessage}')
     return (plainMessage, htmlMessage)
-
-
-# generateHeader generates the formatted header for the email in both plaintext and html
-# python formatting provider returning them in a tuple
-
-def generateHeader(mediaType, numberOfMovies):
-    log.debug(
-        f'[FUNCTION] htmlProcessing/generateHeader({mediaType}, {numberOfMovies})')
-    digits = len(str(numberOfMovies))
-    mediaTypeLength = len(str(mediaType))
-    segmentOne = "+------------+"
-    segmentTwo = f"| {numberOfMovies} {mediaType} Updated |"
-    segmentThree = "+------------+"
-    for i in range(1, (digits + mediaTypeLength), 1):
-        segmentOne = segmentOne.replace("-", "--", 1)
-        segmentThree = segmentThree.replace("-", "--", 1)
-    plainHeader = f"{segmentOne}\n{segmentTwo}\n{segmentThree}\n"
-    htmlHeader = f'<h2 style="font-family:courier;">{segmentOne}<br>{segmentTwo}<br>{segmentThree}<br></h2>'
-    log.debug(
-        f'[RETURN] htmlProcessing/generateHeader : \n{plainHeader} \n{htmlHeader}')
-    return (plainHeader, htmlHeader)

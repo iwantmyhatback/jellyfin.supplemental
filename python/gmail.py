@@ -8,6 +8,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import logging as log
 
+
+#################
+## Definitions ##
+#################
+
+# Importing of required configuration values and environment settings
 infoFile = open("configuration/info.json")
 info = loadJson(infoFile)
 log.debug(f'[LOAD] configuration/info.json : \n{dumpsJson(info, indent=2)}')
@@ -24,26 +30,15 @@ SENDER_STRING = EMAIL.get("SENDER_STRING")
 BCC_LIST = EMAIL.get("BCC_LIST")
 SUBJECT_STRING = EMAIL.get("SUBJECT_STRING")
 
-
 TEST_MODE = str(osEnviron.get("TEST_MODE")).upper()
 if TEST_MODE in ["YES", "TRUE"]:
     log.info('[ENV] TEST_MODE is ACTIVE')
     BCC_LIST = []
 
 
-def main(plainMessage, htmlMessage):
-    log.debug(f'[FUNCTION] gmail/main({plainMessage}, {htmlMessage})')
-    to = TO_LIST
-    sender = SENDER_STRING
-    bcc = BCC_LIST
-    subject = SUBJECT_STRING
-    SendMessage(sender, to, bcc, subject, htmlMessage, plainMessage)
-    log.debug(f'[RETURN] gmail/main : 0')
-    return 0
-
-
-def get_credentials():
-    log.debug('[FUNCTION] gmail/get_credentials()')
+# getCredentials() Performs the Gmail oAuth flow. Creates the credential location and file through authorization or refresh
+def getCredentials():
+    log.debug('[FUNCTION] gmail/getCredentials()')
     home_dir = osPath.expanduser("~")
     credential_dir = osPath.join(osGetCwd(), CREDENTIAL_LOCATION)
     if not osPath.exists(credential_dir):
@@ -68,44 +63,47 @@ def get_credentials():
         credentials.refresh(http)
         store.put(credentials)
 
-    log.debug(f'[RETURN] gmail/get_credentials : {credentials}')
+    log.debug(f'[RETURN] gmail/getCredentials : {credentials}')
     return credentials
 
 
-def SendMessage(sender, to, bcc, subject, msgHtml, msgPlain):
+# sendMessage() Authorizes, builds the API object, creates the message HTML, and sends the email
+def sendMessage(sender, to, bcc, subject, msgHtml, msgPlain):
     log.debug(
-        f'[FUNCTION] gmail/SendMessage({sender}, {to}, {bcc}, {subject}, {msgHtml}, {msgPlain})')
-    credentials = get_credentials()
+        f'[FUNCTION] gmail/sendMessage({sender}, {to}, {bcc}, {subject}, {msgHtml}, {msgPlain})')
+    credentials = getCredentials()
     http = credentials.authorize(Http())
     service = apiDiscovery.build("gmail", "v1", http=http)
-    message1 = CreateMessageHtml(sender, to, bcc, subject, msgHtml, msgPlain)
-    result = SendMessageInternal(service, "me", message1)
-    log.debug(f'[RETURN] gmail/SendMessage : {result}')
+    message1 = createMessageHtml(sender, to, bcc, subject, msgHtml, msgPlain)
+    result = sendMessageInternal(service, "me", message1)
+    log.debug(f'[RETURN] gmail/sendMessage : {result}')
     return result
 
 
-def SendMessageInternal(service, user_id, message):
+# sendMessageInternal() Sends the email
+def sendMessageInternal(service, user_id, message):
     log.debug(
-        f'[FUNCTION] gmail/SendMessageInternal({service}, {user_id}, {message})')
+        f'[FUNCTION] gmail/sendMessageInternal({service}, {user_id}, {message})')
     try:
         message = service.users().messages().send(
             userId=user_id, body=message).execute()
         print(f"[INFO] Gmail Message Sent .......... ID : {message['id']}")
-        log.debug(f'[RETURN] gmail/SendMessageInternal : {message}')
+        log.debug(f'[RETURN] gmail/sendMessageInternal : {message}')
         return message
 
     except apiErrors.HttpError as error:
         print(f"[ERROR] An error occurred: {error}")
-        log.warning(f'[RETURN] gmail/SendMessageInternal : Error')
+        log.warning(f'[RETURN] gmail/sendMessageInternal : Error')
         return "Error"
 
-    log.debug(f'[RETURN] gmail/SendMessageInternal : OK')
+    log.debug(f'[RETURN] gmail/sendMessageInternal : OK')
     return "OK"
 
 
-def CreateMessageHtml(sender, to, bcc, subject, msgHtml, msgPlain):
+# createMessageHtml() Uses the email info and created email data to construct the email object
+def createMessageHtml(sender, to, bcc, subject, msgHtml, msgPlain):
     log.debug(
-        f'[FUNCTION] gmail/CreateMessageHtml({sender}, {to}, {bcc}, {subject}, {msgHtml}, {msgPlain})')
+        f'[FUNCTION] gmail/createMessageHtml({sender}, {to}, {bcc}, {subject}, {msgHtml}, {msgPlain})')
     message = MIMEMultipart("alternative")
     message["To"] = ", ".join(to)
     message["Bcc"] = ", ".join(bcc)
@@ -115,5 +113,21 @@ def CreateMessageHtml(sender, to, bcc, subject, msgHtml, msgPlain):
     message.attach(MIMEText(msgPlain, "plain"))
     message.attach(MIMEText(msgHtml, "html"))
     result = {"raw": urlsafe_b64encode(message.as_bytes()).decode()}
-    log.debug(f'[RETURN] gmail/CreateMessageHtml : {result}')
+    log.debug(f'[RETURN] gmail/createMessageHtml : {result}')
     return result
+
+
+################
+## Executions ##
+################
+
+# main() Performs the functionality of this file. Sending an email with the generated html information
+def main(plainMessage, htmlMessage):
+    log.debug(f'[FUNCTION] gmail/main({plainMessage}, {htmlMessage})')
+    to = TO_LIST
+    sender = SENDER_STRING
+    bcc = BCC_LIST
+    subject = SUBJECT_STRING
+    sendMessage(sender, to, bcc, subject, htmlMessage, plainMessage)
+    log.debug(f'[RETURN] gmail/main : 0')
+    return 0
