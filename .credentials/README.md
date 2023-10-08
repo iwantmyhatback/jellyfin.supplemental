@@ -41,7 +41,7 @@ To get this file you need to:
 
 ### gmail-secret-file.sample.json
 
-A sample of what a correct `<repoRoot>/.credentials/gmail-secret-file.json` should look like. This is simply for validation of newly generated files to make sure they match this template. Seeing as Gmail offers a few different ways of authenticating between service accounts, oAuth, and API keys i am providing this to make sure that the correct file is queried by the user in the Google Cloud Console
+A sample of what a correct `<repoRoot>/.credentials/gmail-secret-file.json` should look like. This is simply for validation of newly generated files to make sure they match this template. Seeing as Gmail offers a few different ways of authenticating between service accounts, oAuth, and API keys I am providing this to make sure that the correct file is queried by the user in the Google Cloud Console
 
 ### gmail-python-email-send.json
 

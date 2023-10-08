@@ -2,9 +2,6 @@
 
 The Python content for this script set. Contains the data querying and processing as well as the Gmail API utilization for email sending
 
-### connection.py
-
-Uses configuration files from `<repoRoot>/configuration/info*.json` to connect to Jellyfin and return a client to `<repoRoot>/python/jellyfin.py`
 
 ### gmail.py
 
@@ -16,7 +13,7 @@ Processes the compiled information in the `main` function of `<repoRoot>/python/
 
 ### jellyfin.py
 
-Queries information from Jellyfin and processes the data to prepare it for HTML generation by `<repoRoot>/python/htmlProcessing.py`
+Connects to and queries information from Jellyfin to processes the data and prepare it for HTML generation by `<repoRoot>/python/htmlProcessing.py`
 
 ### main.py
 
