@@ -1,28 +1,73 @@
-from connection import jellyfinConnection
 from operator import itemgetter
-from utilities import isAquiredThisWeek, stringToDate, replaceEveryNth, getLastUrlSegment
-from json import load as loadJson, dumps as dumpsJson
+from utilities import isAquiredWithinThreshold, stringToDate, replaceEveryNth, getLastUrlSegment
+from json import load as loadJson, dumps as dumpsJson, dump as dumpJson
 from requests import get as httpGET
 from htmlProcessing import main as generateHtml
+from jellyfin_apiclient_python import JellyfinClient
+from os import environ as osEnviron, path as osPath
 import logging as log
 
-info = loadJson(open("configuration/info.json"))
-log.debug(f'[LOAD] configuration/info.json : \n{dumpsJson(info, indent=2)}')
 
-client = jellyfinConnection()
+#################
+## Definitions ##
+#################
+
+# Check whether we want to use secondary JSON file (mostly used for testing on a secondary machine)
+REMOTE_CONNECTION = str(osEnviron.get("REMOTE_CONNECTION")).upper()
+
+# Load the appropriate JSON file of configurations
+if REMOTE_CONNECTION in ["YES", "TRUE"]:
+    log.info(
+        f'[ENV] REMOTE_CONNECTION={REMOTE_CONNECTION} passed in environment ..........')
+    whichInfoFile = "info.remote.json"
+    infoFile = open(f"configuration/{whichInfoFile}")
+
+else:
+    whichInfoFile = "info.json"
+    infoFile = open(f"configuration/{whichInfoFile}")
+
+info = loadJson(infoFile)
+log.debug(
+    f'[LOAD] configuration/{whichInfoFile} : \n{dumpsJson(info, indent=2)}')
 
 
-def main(queryType):
-    log.debug(f'[FUNCTION] jellyfin/main({queryType})')
-    queryTypeSpecifics = parseMediaType(queryType)
-    recentlyAddedItems = queryJellyfin(queryTypeSpecifics)
-    newItemList = extractItemData(recentlyAddedItems, queryTypeSpecifics)
-    (plainMessage, htmlMessage) = generateHtml(newItemList, queryTypeSpecifics)
-    log.debug(
-        f'[RETURN] jellyfin/main : \nPLAIN:\n{plainMessage} \nHTML:\n{htmlMessage}')
-    return (plainMessage, htmlMessage)
+# jellyfinConnection() Authorizes with Jellyfin, creates a credential file, and returns a client object
+def jellyfinConnection():
+    log.debug('[FUNCTION] connection/jellyfinConnection()')
+    JELLYFIN = info.get("JELLYFIN")
+    SERVER_URL = JELLYFIN.get("SERVER_URL")
+    PORT = JELLYFIN.get("PORT")
+    USERNAME = JELLYFIN.get("USERNAME")
+    PASSWORD = JELLYFIN.get("PASSWORD")
+    CREDENTIAL_LOCATION = JELLYFIN.get("CREDENTIAL_LOCATION")
+    CLIENT_SECRET_FILE = JELLYFIN.get("CLIENT_SECRET_FILE")
+    CREDENTIAL_FILE = f"{CREDENTIAL_LOCATION}/{CLIENT_SECRET_FILE}"
+
+    client = JellyfinClient()
+    client.config.app('jellyfin.supplemental',
+                      '0.0.1',
+                      'administratorsMachine',
+                      'adminMach'
+                      )
+    client.config.data["auth.ssl"] = True
+
+    if not osPath.isfile(CREDENTIAL_FILE):
+        client.auth.connect_to_address(f"{SERVER_URL}:{PORT}")
+        client.auth.login(f"{SERVER_URL}:{PORT}", USERNAME, PASSWORD)
+        credentials = client.auth.credentials.get_credentials()
+        server = credentials["Servers"][0]
+        server["username"] = USERNAME
+        with open(CREDENTIAL_FILE, 'w', encoding='utf-8') as file:
+            dumpJson(server, file, ensure_ascii=False, indent=4)
+
+    credentialFile = open(CREDENTIAL_FILE)
+    credentials = loadJson(credentialFile)
+    client.authenticate({"Servers": [credentials]}, discover=False)
+    log.debug(f'[RETURN] connection/jellyfinConnection : {client}')
+    return client
 
 
+# parseMediaType() Returns the specifics for query depending on the type of media (TV and Movies are determined to be new differently)
 def parseMediaType(queryType):
     log.debug(f'[FUNCTION] jellyfin/parseMediaType({queryType})')
     defaultFields = ['Tags',
@@ -55,6 +100,7 @@ def parseMediaType(queryType):
     return mediaSpecifics.get(queryType)
 
 
+# queryJellyfin() Gets all the recently added media of the specified type
 def queryJellyfin(queryTypeSpecifics):
     log.debug(f'[FUNCTION] jellyfin/queryJellyfin({queryTypeSpecifics})')
 
@@ -76,6 +122,7 @@ def queryJellyfin(queryTypeSpecifics):
     return recentlyAddedItems
 
 
+# extractItemData() extracts the data for the email from the Jellyfin response data and formats it into a list of uniform objects
 def extractItemData(recentlyAddedItems, queryTypeSpecifics):
     log.debug(
         f'[FUNCTION] jellyfin/extractItemData(\n{dumpsJson(recentlyAddedItems, indent=2)}, \n{dumpsJson(queryTypeSpecifics, indent=2)})')
@@ -101,7 +148,7 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
 
         addedDate = stringToDate(relevanceDate, "%Y-%m-%dT%H:%M:%S.%f")
 
-        if isAquiredThisWeek(addedDate):
+        if isAquiredWithinThreshold(addedDate):
 
             # Title, Overview, Tag List, Genre List
             itemTitle = item.get("Name")
@@ -215,6 +262,7 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
     return newItemList
 
 
+# getRemoteImage() gets a poster image from TMDB
 def getRemoteImage(item):
     log.debug(
         f'[FUNCTION] jellyfin/getRemoteImage(\n{dumpsJson(item, indent=2)})')
@@ -256,3 +304,22 @@ def getRemoteImage(item):
         formattedUrl = baseImageUrl.format(imageId=imageFile)
         log.debug(f'[RETURN] jellyfin/getRemoteImage : {formattedUrl}')
         return formattedUrl
+
+
+################
+## Executions ##
+################
+
+client = jellyfinConnection()
+
+
+# main() Performs the functionality of this file. Query Jellyfin for infomation, extract the data, and trandform it into emailable format
+def main(queryType):
+    log.debug(f'[FUNCTION] jellyfin/main({queryType})')
+    queryTypeSpecifics = parseMediaType(queryType)
+    recentlyAddedItems = queryJellyfin(queryTypeSpecifics)
+    newItemList = extractItemData(recentlyAddedItems, queryTypeSpecifics)
+    (plainMessage, htmlMessage) = generateHtml(newItemList, queryTypeSpecifics)
+    log.debug(
+        f'[RETURN] jellyfin/main : \nPLAIN:\n{plainMessage} \nHTML:\n{htmlMessage}')
+    return (plainMessage, htmlMessage)
