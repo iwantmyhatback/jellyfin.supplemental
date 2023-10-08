@@ -53,7 +53,7 @@ def getCredentials():
             f"{credential_dir}/{CLIENT_SECRET_FILE}", SCOPES)
         flow.user_agent = APPLICATION_NAME
         args = oa2Tools.argparser.parse_args()
-        args.noauth_local_webserver = True
+        args.noauth_local_webserver = False
         credentials = oa2Tools.run_flow(flow, store, args)
         print("Storing credentials to " + credential_path)
 
