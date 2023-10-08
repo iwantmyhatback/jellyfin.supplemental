@@ -74,7 +74,7 @@ def get_credentials():
 
 def SendMessage(sender, to, bcc, subject, msgHtml, msgPlain):
     log.debug(
-        f'[FUNCTION] gmail/SendMessage( {sender}, {to}, {bcc}, {subject}, {msgHtml}, {msgPlain} )')
+        f'[FUNCTION] gmail/SendMessage({sender}, {to}, {bcc}, {subject}, {msgHtml}, {msgPlain})')
     credentials = get_credentials()
     http = credentials.authorize(Http())
     service = apiDiscovery.build("gmail", "v1", http=http)
@@ -86,7 +86,7 @@ def SendMessage(sender, to, bcc, subject, msgHtml, msgPlain):
 
 def SendMessageInternal(service, user_id, message):
     log.debug(
-        f'[FUNCTION] gmail/SendMessageInternal( {service}, {user_id}, {message} )')
+        f'[FUNCTION] gmail/SendMessageInternal({service}, {user_id}, {message})')
     try:
         message = service.users().messages().send(
             userId=user_id, body=message).execute()
@@ -105,7 +105,7 @@ def SendMessageInternal(service, user_id, message):
 
 def CreateMessageHtml(sender, to, bcc, subject, msgHtml, msgPlain):
     log.debug(
-        f'[FUNCTION] gmail/CreateMessageHtml( {sender}, {to}, {bcc}, {subject}, {msgHtml}, {msgPlain} )')
+        f'[FUNCTION] gmail/CreateMessageHtml({sender}, {to}, {bcc}, {subject}, {msgHtml}, {msgPlain})')
     message = MIMEMultipart("alternative")
     message["To"] = ", ".join(to)
     message["Bcc"] = ", ".join(bcc)

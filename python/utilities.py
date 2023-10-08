@@ -1,17 +1,19 @@
 from datetime import *
 from urllib.parse import urlparse
 import logging as log
+from os import environ as osEnviron
 
 # isAquiredThisWeek takes in a datetime and returns Boolean indicating whether or not the date
 # is within the previous 1 week (7 days)
 
 
 def isAquiredThisWeek(dateAdded):
+    dayThreshold = int(osEnviron.get("DAY_THRESHOLD"))
     log.debug(f'[FUNCTION] utilities/isAquiredThisWeek({dateAdded})')
     now = datetime.now()
     log.debug(
         f'[RETURN] isAquiredThisWeek : {(now - dateAdded).days <= 7}')
-    return (now - dateAdded).days <= 7
+    return (now - dateAdded).days <= dayThreshold
 
 
 # stringToDate takes an input String and the date format or parsing the input string into

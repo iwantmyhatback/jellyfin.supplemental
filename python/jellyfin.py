@@ -78,7 +78,7 @@ def queryJellyfin(queryTypeSpecifics):
 
 def extractItemData(recentlyAddedItems, queryTypeSpecifics):
     log.debug(
-        f'[FUNCTION] jellyfin/extractItemData( \n{dumpsJson(recentlyAddedItems, indent=2)}, \n{dumpsJson(queryTypeSpecifics, indent=2)} )')
+        f'[FUNCTION] jellyfin/extractItemData(\n{dumpsJson(recentlyAddedItems, indent=2)}, \n{dumpsJson(queryTypeSpecifics, indent=2)})')
     newItemList = []
     baseYoutube = "https://www.youtube.com/watch?v={trailerId}"
 
@@ -217,7 +217,7 @@ def extractItemData(recentlyAddedItems, queryTypeSpecifics):
 
 def getRemoteImage(item):
     log.debug(
-        f'[FUNCTION] jellyfin/getRemoteImage( \n{dumpsJson(item, indent=2)} )')
+        f'[FUNCTION] jellyfin/getRemoteImage(\n{dumpsJson(item, indent=2)})')
     baseImageUrl = "http://image.tmdb.org/t/p/w185/{imageId}"
     itemId = item.get('Id')
 

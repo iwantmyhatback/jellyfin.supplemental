@@ -14,3 +14,5 @@ while read -r variable; do
         export "${variable?}"
     fi
 done < "${REPO_ROOT_DIR}/configuration/environment.properties"
+
+export ALREADY_SOURCED=TRUE

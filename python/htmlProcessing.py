@@ -4,7 +4,7 @@ import logging as log
 
 def main(newItemList, queryTypeSpecifics):
     log.debug(
-        f'[FUNCTION] htmlProcessing/main( \n{dumpsJson(newItemList, indent=2)}, \n{dumpsJson(queryTypeSpecifics, indent=2)} )')
+        f'[FUNCTION] htmlProcessing/main(\n{dumpsJson(newItemList, indent=2)}, \n{dumpsJson(queryTypeSpecifics, indent=2)})')
 
     (plainMessage, htmlMessage) = generateHeader(
         f'{queryTypeSpecifics.get("name")}(s)', len(newItemList))
@@ -63,7 +63,7 @@ def main(newItemList, queryTypeSpecifics):
 
 def generateHeader(mediaType, numberOfMovies):
     log.debug(
-        f'[FUNCTION] htmlProcessing/generateHeader({mediaType}, {numberOfMovies} )')
+        f'[FUNCTION] htmlProcessing/generateHeader({mediaType}, {numberOfMovies})')
     digits = len(str(numberOfMovies))
     mediaTypeLength = len(str(mediaType))
     segmentOne = "+------------+"
