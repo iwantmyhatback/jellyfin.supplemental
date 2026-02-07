@@ -1,12 +1,15 @@
-from httplib2 import Http
 from os import environ as osEnviron, path as osPath, makedirs as osMakedirs, getcwd as osGetCwd
 from json import load as loadJson, dumps as dumpsJson
 from base64 import urlsafe_b64encode
-from oauth2client import client as oa2Client, tools as oa2Tools, file as oa2File
-from apiclient import errors as apiErrors, discovery as apiDiscovery
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import logging as log
+
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient import errors as apiErrors
 
 
 #################
@@ -39,32 +42,36 @@ if TEST_MODE in ["YES", "TRUE"]:
 # getCredentials() Performs the Gmail oAuth flow. Creates the credential location and file through authorization or refresh
 def getCredentials():
     log.debug('[FUNCTION] gmail/getCredentials()')
-    home_dir = osPath.expanduser("~")
     credential_dir = osPath.join(osGetCwd(), CREDENTIAL_LOCATION)
     if not osPath.exists(credential_dir):
         osMakedirs(credential_dir)
 
-    credential_path = osPath.join(
-        credential_dir, "gmail-python-email-send.json")
-    store = oa2File.Storage(credential_path)
-    credentials = store.get()
-    if not credentials:
-        flow = oa2Client.flow_from_clientsecrets(
-            f"{credential_dir}/{CLIENT_SECRET_FILE}", SCOPES)
-        flow.user_agent = APPLICATION_NAME
-        args = oa2Tools.argparser.parse_args()
-        args.noauth_local_webserver = False
-        credentials = oa2Tools.run_flow(flow, store, args)
-        print("Storing credentials to " + credential_path)
+    credential_path = osPath.join(credential_dir, "gmail-python-email-send.json")
+    client_secret_path = osPath.join(credential_dir, CLIENT_SECRET_FILE)
+    creds = None
 
-    else:
-        credentials = store.get()
-        http = credentials.authorize(Http())
-        credentials.refresh(http)
-        store.put(credentials)
+    # Load existing credentials from the stored token file
+    if osPath.exists(credential_path):
+        creds = Credentials.from_authorized_user_file(credential_path, [SCOPES])
 
-    log.debug(f'[RETURN] gmail/getCredentials : {credentials}')
-    return credentials
+    # If no valid credentials, either refresh or run the full auth flow
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            log.info('[AUTH] Refreshing expired access token')
+            creds.refresh(Request())
+        else:
+            log.info('[AUTH] Running full authorization flow')
+            flow = InstalledAppFlow.from_client_secrets_file(
+                client_secret_path, [SCOPES])
+            creds = flow.run_local_server(port=0)
+
+        # Persist the credentials for future runs
+        with open(credential_path, "w") as token_file:
+            token_file.write(creds.to_json())
+        log.info(f'[AUTH] Credentials stored to {credential_path}')
+
+    log.debug(f'[RETURN] gmail/getCredentials : {creds}')
+    return creds
 
 
 # sendMessage() Authorizes, builds the API object, creates the message HTML, and sends the email
@@ -72,8 +79,7 @@ def sendMessage(sender, to, bcc, subject, msgHtml, msgPlain):
     log.debug(
         f'[FUNCTION] gmail/sendMessage({sender}, {to}, {bcc}, {subject}, {msgHtml}, {msgPlain})')
     credentials = getCredentials()
-    http = credentials.authorize(Http())
-    service = apiDiscovery.build("gmail", "v1", http=http)
+    service = build("gmail", "v1", credentials=credentials)
     message1 = createMessageHtml(sender, to, bcc, subject, msgHtml, msgPlain)
     result = sendMessageInternal(service, "me", message1)
     log.debug(f'[RETURN] gmail/sendMessage : {result}')
