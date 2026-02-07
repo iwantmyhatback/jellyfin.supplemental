@@ -26,6 +26,8 @@ fi
 
 . "${PYENV_LOCATION}/bin/activate"
 
+pip install --requirement requirements.txt
+
 # Determine which info file to use (mirrors logic in python/jellyfin.py)
 if [ "${REMOTE_CONNECTION:-}" = "TRUE" ] || [ "${REMOTE_CONNECTION:-}" = "YES" ]; then
     INFO_FILE="${REPO_ROOT_DIR}/configuration/info.remote.json"
@@ -42,10 +44,18 @@ print(f\"{j['SERVER_URL']}:{j['PORT']}\")
 
 JELLYFIN_CLIENT_DIR="${PYENV_LOCATION}/jellyfin-client"
 
+OPENAPI_SPEC="${JELLYFIN_URL}/api-docs/openapi.json"
+
 if [ ! -d "${JELLYFIN_CLIENT_DIR}" ] || [ "${FORCE_CLIENT_REGEN:-}" = 'TRUE' ]; then
-    echo "[INFO] [OPENAPI] Generating Jellyfin API client from ${JELLYFIN_URL}/api-docs/openapi.json"
-    openapi-generator generate \
-        -i "${JELLYFIN_URL}/api-docs/openapi.json" \
+    # Verify Jellyfin server and OpenAPI spec are reachable before generation
+    HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${OPENAPI_SPEC}")
+    if [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 400 ]; then
+        echo "[ERROR] [OPENAPI] Jellyfin server unreachable or spec unavailable at ${OPENAPI_SPEC} (HTTP ${HTTP_STATUS})"
+        exit 1
+    fi
+    echo "[INFO] [OPENAPI] Jellyfin spec reachable (HTTP ${HTTP_STATUS}). Generating client from ${OPENAPI_SPEC}"
+    openapi-generator-cli generate \
+        -i "${OPENAPI_SPEC}" \
         -g python \
         -o "${JELLYFIN_CLIENT_DIR}" \
         --package-name jellyfin_api \
@@ -63,8 +73,5 @@ fi
 
 export DEVICE="$(hostname)"
 export DEVICE_ID="$(uname -n)"
-
-pip install --requirement requirements.txt
-# pip freeze > requirements.txt
 
 python3 -Bu python/main.py
