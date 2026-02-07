@@ -61,7 +61,8 @@ else
     echo "[INFO] [OPENAPI] Jellyfin API client already exists at ${JELLYFIN_CLIENT_DIR}"
 fi
 
-export HOSTNAME="$(hostname)"
+export DEVICE="$(hostname)"
+export DEVICE_ID="$(uname -n)"
 
 pip install --requirement requirements.txt
 # pip freeze > requirements.txt
