@@ -53,8 +53,8 @@ A sample of what a correct `<repoRoot>/.credentials/gmail-python-email-send.json
 
 ### jellyfin-credentials.json
 
-**This file is generated** by the `<repoRoot>/python/connection.py` execution using the Jellyfin credentials and server information provided in the configuration file `<repoRoot>/configuration/info*.json`
+**This file is generated** by `<repoRoot>/python/jellyfin.py` on first authentication using the Jellyfin credentials and server information provided in the configuration file `<repoRoot>/configuration/info*.json`. Contains `AccessToken`, `UserId`, and `username`.
 
 ### jellyfin-credentials.sample.json
 
-A sample of what a correct `<repoRoot>/.credentials/jellyfin-credentials.json` should look like. This is simply for validation of newly generated files to make sure they match this template. The `<repoRoot>/python/connection.py` execution should generate something just like this with no user intervention if the configuration file (`<repoRoot>/configuration/info*.json`) is correctly set up
+A sample of what a correct `<repoRoot>/.credentials/jellyfin-credentials.json` should look like. This is simply for validation of newly generated files to make sure they match this template. The `<repoRoot>/python/jellyfin.py` execution should generate something just like this with no user intervention if the configuration file (`<repoRoot>/configuration/info*.json`) is correctly set up.
