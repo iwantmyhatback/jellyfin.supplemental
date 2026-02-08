@@ -20,4 +20,5 @@ six==1.16.0
 types-requests==2.31.0.1
 types-urllib3>=1.26.25.13
 uritemplate==4.1.1
+openapi-generator-cli[jdk4py]==7.19.0
 urllib3>=2.1.0
