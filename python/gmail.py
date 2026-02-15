@@ -135,5 +135,6 @@ def main(plainMessage, htmlMessage):
     bcc = BCC_LIST
     subject = SUBJECT_STRING
     sendMessage(sender, to, bcc, subject, htmlMessage, plainMessage)
+    log.info(f'[INFO] Sender [{sender}] transmitted email to [{to}] and bcc [{bcc}] with subject "{subject}"')
     log.debug(f'[RETURN] gmail/main : 0')
     return 0
