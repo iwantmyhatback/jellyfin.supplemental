@@ -6,8 +6,8 @@ from os import environ as osEnviron, path as osPath
 import logging as log
 
 import jellyfin_api
-from jellyfin_api.api.user_api import UserApi
-from jellyfin_api.api.items_api import ItemsApi
+from jellyfin_api.api.authentication_api import AuthenticationApi
+from jellyfin_api.api.library_api import LibraryApi
 from jellyfin_api.api.remote_image_api import RemoteImageApi
 
 
@@ -36,7 +36,61 @@ log.debug(
     f'[LOAD] configuration/{whichInfoFile} : \n{dumpsJson(info, indent=2)}')
 
 
-# jellyfinConnection() Authorizes with Jellyfin, creates a credential file, and returns a client object
+# authenticateWithPassword() Logs in with the configured username and password and caches the result in the credential file
+# Parameters: configuration (jellyfin_api.Configuration), username (str), password (str), credentialFile (str path to write)
+# Returns: (token, user_id) as strings
+def authenticateWithPassword(configuration, username, password, credentialFile):
+    log.debug('[FUNCTION] connection/authenticateWithPassword()')
+    # The authenticate endpoint doesn't include auth settings in the generated
+    # client, so we pass the header manually
+    auth_header = (
+        'MediaBrowser Client="jellyfin.supplemental", '
+        'Device="administratorsMachine", '
+        'DeviceId="adminMach", '
+        'Version="0.0.1"'
+    )
+    api_client = jellyfin_api.ApiClient(configuration)
+    auth_api = AuthenticationApi(api_client)
+    result = auth_api.authenticate_user_by_name(
+        jellyfin_api.AuthenticateUserByName(username=username, pw=password),
+        _headers={'Authorization': auth_header}
+    )
+    token = result.access_token
+    user_id = str(result.user.id)
+    with open(credentialFile, 'w', encoding='utf-8') as f:
+        dumpJson({"AccessToken": token, "UserId": user_id, "username": username}, f, indent=4)
+    return token, user_id
+
+
+# buildAuthenticatedClient() Creates an API client that sends the given token on every authenticated call
+# Parameters: configuration (jellyfin_api.Configuration), token (str)
+# Returns: jellyfin_api.ApiClient
+def buildAuthenticatedClient(configuration, token):
+    configuration.api_key['CustomAuthentication'] = (
+        f'MediaBrowser Token="{token}", '
+        f'Client="jellyfin.supplemental", '
+        f'Device="{DEVICE}", '
+        f'DeviceId="{DEVICE_ID}", '
+        f'Version="1.0.0"'
+    )
+    return jellyfin_api.ApiClient(configuration)
+
+
+# isTokenAccepted() Checks whether Jellyfin still accepts the client's token using the smallest possible item query
+# Parameters: api_client (jellyfin_api.ApiClient), user_id (str)
+# Returns: True if accepted, False on HTTP 401. Any other API error is raised, so an outage doesn't trigger a login
+def isTokenAccepted(api_client, user_id):
+    try:
+        LibraryApi(api_client).get_items(user_id=user_id, limit=1, _request_timeout=30)
+    except jellyfin_api.ApiException as error:
+        if error.status == 401:
+            return False
+        raise
+    return True
+
+
+# jellyfinConnection() Authorizes with Jellyfin, reusing the cached token unless it is missing or rejected, and returns a client object
+# Returns: (api_client, user_id)
 def jellyfinConnection():
     log.debug('[FUNCTION] connection/jellyfinConnection()')
     JELLYFIN = info.get("JELLYFIN")
@@ -54,35 +108,17 @@ def jellyfinConnection():
         credentials = loadJson(open(CREDENTIAL_FILE))
         token = credentials["AccessToken"]
         user_id = credentials["UserId"]
-    else:
-        # Initial auth — the authenticate endpoint doesn't include auth settings
-        # in the generated client, so we pass the header manually
-        auth_header = (
-            'MediaBrowser Client="jellyfin.supplemental", '
-            'Device="administratorsMachine", '
-            'DeviceId="adminMach", '
-            'Version="0.0.1"'
-        )
-        api_client = jellyfin_api.ApiClient(configuration)
-        auth_api = UserApi(api_client)
-        result = auth_api.authenticate_user_by_name(
-            jellyfin_api.AuthenticateUserByName(username=USERNAME, pw=PASSWORD),
-            _headers={'Authorization': auth_header}
-        )
-        token = result.access_token
-        user_id = str(result.user.id)
-        with open(CREDENTIAL_FILE, 'w', encoding='utf-8') as f:
-            dumpJson({"AccessToken": token, "UserId": user_id, "username": USERNAME}, f, indent=4)
+        api_client = buildAuthenticatedClient(configuration, token)
 
-    # Set auth header with token for all subsequent calls
-    configuration.api_key['CustomAuthentication'] = (
-        f'MediaBrowser Token="{token}", '
-        f'Client="jellyfin.supplemental", '
-        f'Device="{DEVICE}", '
-        f'DeviceId="{DEVICE_ID}", '
-        f'Version="1.0.0"'
-    )
-    api_client = jellyfin_api.ApiClient(configuration)
+        if isTokenAccepted(api_client, user_id):
+            log.debug(f'[RETURN] connection/jellyfinConnection : {api_client}')
+            return api_client, user_id
+
+        log.warning('[AUTH] Cached Jellyfin token was rejected. Logging in again')
+
+    token, user_id = authenticateWithPassword(
+        configuration, USERNAME, PASSWORD, CREDENTIAL_FILE)
+    api_client = buildAuthenticatedClient(configuration, token)
     log.debug(f'[RETURN] connection/jellyfinConnection : {api_client}')
     return api_client, user_id
 
@@ -126,8 +162,8 @@ def queryJellyfin(queryTypeSpecifics):
     log.debug(f'[FUNCTION] jellyfin/queryJellyfin({queryTypeSpecifics})')
 
     try:
-        items_api = ItemsApi(api_client)
-        result = items_api.get_items(
+        library_api = LibraryApi(api_client)
+        result = library_api.get_items(
             user_id=user_id,
             fields=queryTypeSpecifics.get('fields'),
             include_item_types=queryTypeSpecifics.get('mediaTypesList'),

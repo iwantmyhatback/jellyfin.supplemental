@@ -53,7 +53,7 @@ A sample of what a correct `<repoRoot>/.credentials/gmail-python-email-send.json
 
 ### jellyfin-credentials.json
 
-**This file is generated** by `<repoRoot>/python/jellyfin.py` on first authentication using the Jellyfin credentials and server information provided in the configuration file `<repoRoot>/configuration/info*.json`. Contains `AccessToken`, `UserId`, and `username`.
+**This file is generated** by `<repoRoot>/python/jellyfin.py` on first authentication using the Jellyfin credentials and server information provided in the configuration file `<repoRoot>/configuration/info*.json`. Contains `AccessToken`, `UserId`, and `username`. The token is checked at startup; if Jellyfin rejects it (HTTP 401), the script logs in again and rewrites this file.
 
 ### jellyfin-credentials.sample.json
 
